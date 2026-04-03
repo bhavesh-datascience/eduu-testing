@@ -3,145 +3,70 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Edunovaq - Active Quiz</title>
+    <title>Edunovaq - Quiz</title>
     <link rel="icon" type="image/webp" href="1.webp">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="dashboard-styles.css">
     <style>
-        /* Exact layout fixes for the blue quiz card */
         .quiz-container {
             max-width: 800px;
-            margin: 30px auto;
-            padding: 35px 45px;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            min-height: 450px;
-            position: relative;
-        }
-
-        /* Header: Award + Title on Left | Q: 1/x on Right */
-        .quiz-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-            width: 100%;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .award-icon {
-            font-size: 24px;
-            color: #f1c40f;
-        }
-
-        /* The specific gold award icon */
-
-        .question-tracker-pill {
-            font-weight: 800;
-            opacity: 0.9;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 18px;
+            margin: 40px auto;
+            padding: 30px;
             border-radius: 20px;
-            color: #fff;
-            letter-spacing: 1px;
         }
 
         .question-text {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 35px;
-            line-height: 1.5;
+            font-size: 24px;
+            margin-bottom: 30px;
             color: #fff;
         }
 
-        .options-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-grow: 1;
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
         }
 
         .option-btn {
-            width: 100%;
-            text-align: left;
-            padding: 18px 25px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
             color: #fff;
-            font-size: 16px;
+            padding: 15px 20px;
+            text-align: left;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s;
+            font-size: 16px;
         }
 
         .option-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #C5A668;
         }
 
         .option-btn.correct {
             background: rgba(46, 204, 113, 0.2);
-            border: 2px solid #2ecc71;
-            font-weight: bold;
+            border-color: #2ecc71;
+            color: #2ecc71;
         }
 
         .option-btn.wrong {
             background: rgba(231, 76, 60, 0.2);
-            border: 2px solid #e74c3c;
-            font-weight: bold;
+            border-color: #e74c3c;
+            color: #e74c3c;
         }
 
-        /* STRICT Bottom-Right Button Styling (inside the card) */
         .next-btn-container {
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-end;
-            width: 100%;
-            margin-top: auto;
-            padding-top: 15px;
-        }
-
-        .next-btn {
-            background: #ffffff;
-            color: #1a1f3c;
-            font-weight: 800;
-            border-radius: 30px;
-            padding: 12px 35px;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s ease, background 0.2s;
+            margin-top: 30px;
+            text-align: right;
             display: none;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .next-btn:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
-        }
-
-        /* Global Header Back Button Hover */
-        .global-back-btn {
-            transition: 0.3s;
-            opacity: 0.9;
-        }
-
-        .global-back-btn:hover {
-            opacity: 1;
-            transform: translateX(-3px);
+        .score-board {
+            text-align: center;
+            font-size: 28px;
             color: #C5A668;
+            display: none;
         }
     </style>
 </head>
@@ -149,8 +74,10 @@
 <body>
     <nav class="sidebar glass-style">
         <div class="brand">
-            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
-                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <div class="icon-container">
+                <img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;">
+            </div>
             <span class="nav-text brand-text">Edunovaq</span>
         </div>
         <ul class="nav-list">
@@ -188,160 +115,104 @@
     </nav>
 
     <main class="main-container">
-        <header class="top-header" style="justify-content: space-between; width: 100%; align-items: center;">
-
+        <header class="top-header" style="justify-content: space-between; width: 100%;">
             <div class="global-back-btn" style="display: flex; align-items: center; gap: 12px; cursor: pointer;"
                 onclick="window.location.href='/quizdashboardpage'">
                 <i class="fa-solid fa-arrow-left" style="font-size: 22px;"></i>
-                <h1 class="page-title" style="margin-bottom: 0;">Quiz</h1>
-            </div>
-
-
+                <h1 class="page-title" style="margin-bottom: 0;" id="quiz-title">Quiz</h1>
             </div>
         </header>
 
-        <div class="card glass-style quiz-container" id="quiz-card">
-
-            <div id="loading-state" style="text-align: center; padding: 40px; width: 100%;">
-                <h2>Loading Quiz...</h2>
-            </div>
-
-            <div id="active-quiz-state" style="display: none; width: 100%; height: 100%; flex-direction: column;">
-
-                <div class="quiz-header">
-                    <div class="header-left">
-                        <i class="fa-solid fa-award award-icon"></i>
-                        <h3 id="subject-title" style="margin: 0; color: #fff; font-size: 24px; font-weight: 800;">
-                            Subject Quiz</h3>
-                    </div>
-                    <span id="question-tracker" class="question-tracker-pill">Q: 1/10</span>
+        <div class="quiz-container glass-style" id="quiz-box">
+            <div id="loading-msg" style="text-align:center; opacity:0.6;">Loading your questions...</div>
+            <div id="quiz-content" style="display: none;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; opacity: 0.7;">
+                    <span id="q-counter">Question 1/X</span>
+                    <span>Score: <span id="score-display">0</span></span>
                 </div>
-
-                <div class="question-text" id="question-text">Question text goes here?</div>
-
-                <div class="options-wrapper" id="options-container">
-                </div>
-
-                <div class="next-btn-container">
-                    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question <i
+                <div class="question-text" id="q-text">...</div>
+                <div class="options-grid" id="options-box"></div>
+                <div class="next-btn-container" id="next-box">
+                    <button class="card-btn" onclick="nextQuestion()">Next Question <i
                             class="fa-solid fa-arrow-right"></i></button>
                 </div>
             </div>
-
-            <div id="end-state" style="display: none; text-align: center; width: 100%; padding-top: 20px;">
-                <div class="icon-circle" style="margin: 0 auto 20px auto;"><i class="fa-solid fa-trophy"
-                        style="color: gold;"></i></div>
-                <h2 style="font-size: 32px;">Quiz Completed!</h2>
-                <p style="font-size: 20px; margin-bottom: 40px;">Your Score: <strong id="final-score"
-                        style="color: #2ecc71;">0</strong></p>
-
-                <div style="display: flex; gap: 15px; justify-content: center;">
-                    <button class="card-btn" onclick="window.location.href='/quizdashboardpage'"
-                        style="padding: 12px 30px;">Back to Subjects</button>
-                    <button class="card-btn"
-                        style="background: #ffffff; color: #1a1f3c; border: none; padding: 12px 30px;"
-                        onclick="location.reload()">Retry Quiz</button>
-                </div>
-            </div>
-
+            <div class="score-board" id="final-score"></div>
         </div>
     </main>
 
-    <script src="dashboard-script.js"></script>
-
     <script>
-        let currentQuestions = [];
+        let currentData = [];
         let currentIndex = 0;
         let score = 0;
-        let isAnswered = false;
 
         async function initQuiz() {
-            // Force hide to prevent flashing before load
-            document.getElementById('active-quiz-state').style.display = 'none';
-            document.getElementById('end-state').style.display = 'none';
+            const userId = localStorage.getItem('user_id') || JSON.parse(localStorage.getItem('user') || '{}').id;
+            const subject = localStorage.getItem('selectedQuizSubject') || 'Mathematics';
 
-            const subject = localStorage.getItem('selectedQuizSubject');
-
-            let userId = localStorage.getItem('user_id');
-            if (!userId) {
-                const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
-                userId = savedUser.id;
-            }
-
-            if (!userId) {
-                console.warn("Bypassing login for testing. Using ID: 1");
-                userId = 1;
-            }
-
-            if (!subject) {
-                window.location.href = '/quizdashboardpage';
-                return;
-            }
-
-            document.getElementById('subject-title').innerText = subject + " Quiz";
+            document.getElementById('quiz-title').innerText = `${subject} Quiz`;
 
             try {
-                const response = await fetch(`/api/quiz-data/${userId}/${subject}`);
+                // THE FIX: Uses unified gamification API
+                const response = await fetch(`/api/gamification-data/${userId}/${subject}/quiz`);
                 const data = await response.json();
 
-                if (!response.ok) throw new Error(data.detail || "Failed to load quiz");
-
-                currentQuestions = data.questions;
-                if (currentQuestions.length === 0) throw new Error("No questions available for this subject yet.");
-
-                document.getElementById('loading-state').style.display = 'none';
-
-                // Switch to Flex layout instead of Block for correct button positioning
-                document.getElementById('active-quiz-state').style.display = 'flex';
-                loadQuestion();
-
-            } catch (error) {
-                document.getElementById('loading-state').innerHTML = `<h2>Error</h2><p>${error.message}</p><button class='card-btn mt-3' onclick='window.location.href="/quizdashboardpage"'>Go Back</button>`;
+                if (data.status === "success" && data.data.length > 0) {
+                    currentData = data.data; // THE FIX: Accesses .data instead of .questions
+                    document.getElementById('loading-msg').style.display = 'none';
+                    document.getElementById('quiz-content').style.display = 'block';
+                    loadQuestion();
+                } else {
+                    document.getElementById('loading-msg').innerText = "No questions found for this subject yet.";
+                }
+            } catch (err) {
+                document.getElementById('loading-msg').innerText = "Error loading quiz. Please try again.";
             }
         }
 
         function loadQuestion() {
-            isAnswered = false;
-            document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('question-tracker').innerText = `Q: ${currentIndex + 1}/${currentQuestions.length}`;
+            const qData = currentData[currentIndex];
+            document.getElementById('q-counter').innerText = `Question ${currentIndex + 1} of ${currentData.length}`;
+            document.getElementById('q-text').innerText = qData.q;
+            document.getElementById('next-box').style.display = 'none';
 
-            const qData = currentQuestions[currentIndex];
-            document.getElementById('question-text').innerText = qData.q;
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = '';
 
-            const optionsHtml = qData.options.map((opt, index) =>
-                `<button class="option-btn" onclick="checkAnswer(${index}, this)">${opt}</button>`
-            ).join('');
-
-            document.getElementById('options-container').innerHTML = optionsHtml;
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(idx, qData.answer, btn);
+                optionsBox.appendChild(btn);
+            });
         }
 
-        function checkAnswer(selectedIndex, btnElement) {
-            if (isAnswered) return;
-            isAnswered = true;
+        function checkAnswer(selectedIdx, correctIdx, btnElement) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.onclick = null); // Disable further clicks
 
-            const correctIndex = currentQuestions[currentIndex].answer;
-            const allBtns = document.querySelectorAll('.option-btn');
-
-            if (selectedIndex === correctIndex) {
+            if (selectedIdx === correctIdx) {
                 btnElement.classList.add('correct');
                 score++;
+                document.getElementById('score-display').innerText = score;
             } else {
                 btnElement.classList.add('wrong');
-                allBtns[correctIndex].classList.add('correct');
+                buttons[correctIdx].classList.add('correct');
             }
 
-            // Reveal button using flex to maintain alignment
-            document.getElementById('next-btn').style.display = 'flex';
+            document.getElementById('next-box').style.display = 'block';
         }
 
         function nextQuestion() {
             currentIndex++;
-            if (currentIndex < currentQuestions.length) {
+            if (currentIndex < currentData.length) {
                 loadQuestion();
             } else {
-                document.getElementById('active-quiz-state').style.display = 'none';
-                document.getElementById('end-state').style.display = 'block';
-                document.getElementById('final-score').innerText = `${score} / ${currentQuestions.length}`;
+                document.getElementById('quiz-content').style.display = 'none';
+                const finalBoard = document.getElementById('final-score');
+                finalBoard.style.display = 'block';
+                finalBoard.innerHTML = `Quiz Complete!<br><span style="color:#fff; font-size:20px;">You scored ${score} out of ${currentData.length}</span><br><br><button class="card-btn" onclick="window.location.href='/quizdashboardpage'">Back to Dashboard</button>`;
             }
         }
 

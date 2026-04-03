@@ -25,19 +25,15 @@ from fastapi import FastAPI, HTTPException, Query
 # ==========================================
 # 0. DYNAMIC DATABASE SETUP (Postgres / SQLite)
 # ==========================================
-# Get the Database URL from Render's environment, fallback to local SQLite for testing
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./local_combined.db")
 
-# SQLAlchemy requires 'postgresql://' but Supabase sometimes gives 'postgres://'
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# SQLite needs specific connect_args, Postgres does not
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 else:
-    engine = create_engine(DATABASE_URL) # Cloud Postgres configuration
-
+    engine = create_engine(DATABASE_URL)
 
 # ==========================================
 # 1. DATABASE CONFIGURATION (Auth DB)
@@ -73,7 +69,6 @@ Base.metadata.create_all(bind=engine)
 # ==========================================
 # 2. DETAILS DATABASE CONFIGURATION
 # ==========================================
-# Pointing the details database to the exact same engine
 DetailsSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 DetailsBase = declarative_base()
 
@@ -190,15 +185,19 @@ class PDFChatRequest(BaseModel):
     message: str
     pdf_name: str 
     history: List[ChatMessage] = []
+
 class ScheduleGenRequest(BaseModel):
     prompt: str
+
+class ChartRequest(BaseModel):
+    prompt: str
+    category: str 
 
 # ==========================================
 # 4. APP & AI SETUP
 # ==========================================
 app = FastAPI()
 
-# SECURITY UPDATE: Restrict CORS to your domain and local testing
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -244,7 +243,7 @@ def generate_jaas_token(user_name: str, user_email: str = "student@edunovaq.com"
         raise Exception("Private key file not found. Ensure jaas_private_key.pem is in the correct directory.")
 
     now = int(time.time())
-    exp = now + 7200 # Token expires in 2 hours
+    exp = now + 7200
 
     payload = {
         "aud": "jitsi",
@@ -402,8 +401,32 @@ def get_dashboard_stats(user_id: int, auth_db: Session = Depends(get_db), detail
     exam_prep = "your exams"
     if student and student.exam_preparation_for and len(student.exam_preparation_for) > 0:
         exam_prep = student.exam_preparation_for[0] 
+
+    # --- ROBUST STANDARD & STREAM CHECKER ---
+    raw_std = str(student.class_standard).lower() if student and student.class_standard else "10"
+    raw_stream = str(student.stream).lower() if student and student.stream else ""
+    
+    # Combine both fields to catch "12th commerce" typed in the standard field
+    combined_info = raw_std + " " + raw_stream
+
+    if "12" in raw_std:
+        clean_std = "12"
+    elif "10" in raw_std:
+        clean_std = "10"
+    else:
+        clean_std = "10" 
+        
+    # Check combined string for stream keywords
+    if "commerce" in combined_info:
+        clean_stream = "Commerce"
+    elif "arts" in combined_info:
+        clean_stream = "Arts"
+    else:
+        clean_stream = "Science"
             
     return {
+        "class_standard": clean_std, 
+        "stream": clean_stream,
         "hero_subtitle": f"Keep focusing on {exam_prep}! You have {pending_count} pending tasks to review.",
         "stats": { "progress": progress_percent, "pending": pending_count, "time_spent": "4.5", "streak": 3 },
         "charts": { "performance": [progress_percent, 100 - progress_percent], "attendance": att_data, "attendance_labels": att_labels },
@@ -548,10 +571,6 @@ def chat_with_pdf(request: PDFChatRequest):
         return {"status": "success", "reply": response.text}
     except Exception as e: raise HTTPException(status_code=500, detail=str(e))
 
-class ChartRequest(BaseModel):
-    prompt: str
-    category: str 
-
 @app.post("/api/generate-chart")
 def generate_mermaid_chart(request: ChartRequest):
     try:
@@ -590,35 +609,54 @@ def generate_schedule(request: ScheduleGenRequest):
 # ==========================================
 
 @app.get("/api/gamification-data/{user_id}/{subject}/{type}")
-def get_gamification_data(user_id: int, subject: str, type: str, db: Session = Depends(get_db)):
+def get_gamification_data(user_id: int, subject: str, type: str, 
+                          auth_db: Session = Depends(get_db), 
+                          details_db: Session = Depends(get_details_db)):
     """
     type: 'quiz' or 'flashcard'
     This endpoint fetches data based on the user's standard in the DB.
     """
-    # 1. Identify User
-    user = db.query(User).filter(User.id == user_id).first()
+    user = auth_db.query(User).filter(User.id == user_id).first()
     if not user: raise HTTPException(status_code=404, detail="User not found")
 
-    # 2. Get Student Standard
-    student = db.query(StudentDetail).filter(StudentDetail.email == user.email).first()
+    student = details_db.query(StudentDetail).filter(StudentDetail.email == user.email).first()
     if not student: raise HTTPException(status_code=404, detail="Student profile incomplete")
 
-    # 3. Determine File and Key
-    standard_key = f"Std_{student.class_standard}"
+    # --- ROBUST STANDARD & STREAM CHECKER ---
+    raw_std = str(student.class_standard).lower() if student.class_standard else "10"
+    raw_stream = str(student.stream).lower() if student.stream else ""
+    
+    # Combine both fields
+    combined_info = raw_std + " " + raw_stream
+
+    if "12" in raw_std:
+        if "commerce" in combined_info:
+            standard_key = "Std_12_Commerce"
+        elif "arts" in combined_info:
+            standard_key = "Std_12_Arts"
+        else:
+            standard_key = "Std_12_Science"
+    elif "10" in raw_std:
+        standard_key = "Std_10"
+    else:
+        standard_key = "Std_10" 
+
     file_to_open = "quiz_data.json" if type == "quiz" else "flashcard_data.json"
 
     if not os.path.exists(file_to_open):
         raise HTTPException(status_code=500, detail=f"{file_to_open} missing on server")
 
-    with open(file_to_open, "r") as f:
+    # FIX: Explicitly open files with utf-8 encoding to prevent Unicode errors
+    with open(file_to_open, "r", encoding="utf-8") as f:
         full_data = json.load(f)
     
-    # 4. Fetch content
     content = full_data.get(standard_key, {}).get(subject, [])
+    if not content:
+        raise HTTPException(status_code=404, detail=f"No questions found for {subject} in {standard_key}")
     
     return {
         "status": "success",
-        "standard": student.class_standard,
+        "standard": standard_key.replace("Std_", ""),
         "subject": subject,
         "data": content
     }

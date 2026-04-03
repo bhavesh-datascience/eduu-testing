@@ -3,11 +3,22 @@
         "Mathematics": [
             {
                 "id": 1,
-                "q": "Formula for nth term of an AP?",
+                "q": "What is the HCF of 96 and 404?",
                 "options": [
-                    "a+(n-1)d",
-                    "a+nd",
-                    "2a+(n-1)d",
+                    "2",
+                    "4",
+                    "6",
+                    "8"
+                ],
+                "answer": 1
+            },
+            {
+                "id": 2,
+                "q": "The formula for the nth term of an Arithmetic Progression (AP) is:",
+                "options": [
+                    "a + (n-1)d",
+                    "a + nd",
+                    "2a + (n-1)d",
                     "n/2"
                 ],
                 "answer": 0
@@ -16,38 +27,88 @@
         "Science": [
             {
                 "id": 1,
-                "q": "SI unit of Power?",
+                "q": "Which acid is naturally present in a tomato?",
                 "options": [
-                    "Joule",
-                    "Watt",
-                    "Newton",
-                    "Pascal"
+                    "Methanoic acid",
+                    "Acetic acid",
+                    "Oxalic acid",
+                    "Citric acid"
+                ],
+                "answer": 2
+            },
+            {
+                "id": 2,
+                "q": "The image formed by a convex mirror is always:",
+                "options": [
+                    "Real and enlarged",
+                    "Virtual and diminished",
+                    "Real and diminished",
+                    "Virtual and enlarged"
+                ],
+                "answer": 1
+            }
+        ],
+        "Social Science": [
+            {
+                "id": 1,
+                "q": "In which year did the Jallianwala Bagh massacre take place?",
+                "options": [
+                    "1917",
+                    "1918",
+                    "1919",
+                    "1920"
+                ],
+                "answer": 2
+            }
+        ],
+        "English": [
+            {
+                "id": 1,
+                "q": "In 'A Letter to God', what did Lencho hope for?",
+                "options": [
+                    "A good shower of rain",
+                    "A new tractor",
+                    "A pair of oxen",
+                    "Seeds for his field"
+                ],
+                "answer": 0
+            }
+        ],
+        "Hindi": [
+            {
+                "id": 1,
+                "q": "'सूरज' का पर्यायवाची शब्द क्या है?",
+                "options": [
+                    "निशाकर",
+                    "दिनकर",
+                    "जलद",
+                    "वारिद"
                 ],
                 "answer": 1
             }
         ]
     },
-    "Std_12": {
+    "Std_12_Science": {
         "Physics": [
             {
                 "id": 1,
-                "q": "What is the SI unit of Magnetic Flux?",
+                "q": "The SI unit of electric flux is:",
                 "options": [
-                    "Tesla",
-                    "Weber",
-                    "Henry",
-                    "Farad"
+                    "V/m",
+                    "V·m",
+                    "C/m²",
+                    "N/C"
                 ],
                 "answer": 1
             },
             {
                 "id": 2,
-                "q": "In a p-n junction, the depletion layer is caused by:",
+                "q": "Which series of the hydrogen spectrum lies in the visible region?",
                 "options": [
-                    "Drift",
-                    "Diffusion",
-                    "Ionisation",
-                    "Heating"
+                    "Lyman",
+                    "Balmer",
+                    "Paschen",
+                    "Brackett"
                 ],
                 "answer": 1
             }
@@ -55,21 +116,21 @@
         "Chemistry": [
             {
                 "id": 1,
-                "q": "Which of the following is a crystalline solid?",
+                "q": "What is the coordination number of atoms in a body-centered cubic (bcc) structure?",
                 "options": [
-                    "Glass",
-                    "Rubber",
-                    "Plastic",
-                    "Table Salt"
+                    "4",
+                    "6",
+                    "8",
+                    "12"
                 ],
-                "answer": 3
+                "answer": 2
             },
             {
                 "id": 2,
                 "q": "The rate of a zero-order reaction is independent of:",
                 "options": [
                     "Temperature",
-                    "Concentration",
+                    "Concentration of reactants",
                     "Time",
                     "Catalyst"
                 ],
@@ -105,14 +166,192 @@
         "English": [
             {
                 "id": 1,
-                "q": "Who wrote the poem 'Keeping Quiet'?",
+                "q": "Who is the author of 'The Last Lesson'?",
                 "options": [
-                    "Robert Frost",
+                    "Alphonse Daudet",
                     "Pablo Neruda",
-                    "John Keats",
-                    "Kamala Das"
+                    "Kamala Das",
+                    "John Keats"
+                ],
+                "answer": 0
+            }
+        ]
+    },
+    "Std_12_Commerce": {
+        "Accountancy": [
+            {
+                "id": 1,
+                "q": "Which of the following is NOT a characteristic of a partnership?",
+                "options": [
+                    "Two or more persons",
+                    "Mutual agency",
+                    "Limited liability",
+                    "Sharing of profits"
+                ],
+                "answer": 2
+            },
+            {
+                "id": 2,
+                "q": "Goodwill is an example of:",
+                "options": [
+                    "Current Asset",
+                    "Tangible Asset",
+                    "Intangible Asset",
+                    "Fictitious Asset"
+                ],
+                "answer": 2
+            }
+        ],
+        "Business Studies": [
+            {
+                "id": 1,
+                "q": "Management is considered as:",
+                "options": [
+                    "An Art",
+                    "A Science",
+                    "Both Art and Science",
+                    "Neither Art nor Science"
+                ],
+                "answer": 2
+            },
+            {
+                "id": 2,
+                "q": "Which function of management bridges the gap between where we are and where we want to go?",
+                "options": [
+                    "Organising",
+                    "Planning",
+                    "Directing",
+                    "Controlling"
                 ],
                 "answer": 1
+            }
+        ],
+        "Economics": [
+            {
+                "id": 1,
+                "q": "Macroeconomics primarily focuses on:",
+                "options": [
+                    "Individual consumer behavior",
+                    "The economy as a whole",
+                    "Firm pricing strategies",
+                    "Household income"
+                ],
+                "answer": 1
+            }
+        ],
+        "Mathematics": [
+            {
+                "id": 1,
+                "q": "If matrix A is of order m×n and matrix B is of order n×p, what is the order of AB?",
+                "options": [
+                    "m×p",
+                    "n×n",
+                    "p×m",
+                    "m×n"
+                ],
+                "answer": 0
+            }
+        ],
+        "English": [
+            {
+                "id": 1,
+                "q": "In the poem 'My Mother at Sixty-six', what does the poet notice about her mother?",
+                "options": [
+                    "She is highly energetic",
+                    "She is sleeping with her mouth open",
+                    "She is reading a book",
+                    "She is talking continuously"
+                ],
+                "answer": 1
+            }
+        ]
+    },
+    "Std_12_Arts": {
+        "History": [
+            {
+                "id": 1,
+                "q": "Who was the founder of the Maurya Empire?",
+                "options": [
+                    "Ashoka",
+                    "Chandragupta Maurya",
+                    "Bindusara",
+                    "Harsha"
+                ],
+                "answer": 1
+            },
+            {
+                "id": 2,
+                "q": "In which year did the partition of Bengal take place?",
+                "options": [
+                    "1905",
+                    "1911",
+                    "1947",
+                    "1857"
+                ],
+                "answer": 0
+            }
+        ],
+        "Geography": [
+            {
+                "id": 1,
+                "q": "Which is the most populous country in the world as of 2023?",
+                "options": [
+                    "China",
+                    "India",
+                    "USA",
+                    "Indonesia"
+                ],
+                "answer": 1
+            },
+            {
+                "id": 2,
+                "q": "Which economic activity dominates the primary sector?",
+                "options": [
+                    "Manufacturing",
+                    "Banking",
+                    "Agriculture",
+                    "Information Technology"
+                ],
+                "answer": 2
+            }
+        ],
+        "Political Science": [
+            {
+                "id": 1,
+                "q": "The Cold War was primarily a geopolitical rivalry between which two superpowers?",
+                "options": [
+                    "USA and China",
+                    "USA and USSR",
+                    "UK and Germany",
+                    "India and Pakistan"
+                ],
+                "answer": 1
+            }
+        ],
+        "Sociology": [
+            {
+                "id": 1,
+                "q": "Who is generally considered the founding father of Sociology?",
+                "options": [
+                    "Karl Marx",
+                    "Max Weber",
+                    "Auguste Comte",
+                    "Emile Durkheim"
+                ],
+                "answer": 2
+            }
+        ],
+        "English": [
+            {
+                "id": 1,
+                "q": "What does the 'Last Lesson' symbolize?",
+                "options": [
+                    "Loss of language and freedom",
+                    "End of the school year",
+                    "A difficult math concept",
+                    "A lazy teacher"
+                ],
+                "answer": 0
             }
         ]
     }
