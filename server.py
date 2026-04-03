@@ -402,7 +402,7 @@ def get_dashboard_stats(user_id: int, auth_db: Session = Depends(get_db), detail
     if student and student.exam_preparation_for and len(student.exam_preparation_for) > 0:
         exam_prep = student.exam_preparation_for[0] 
 
-    # --- ROBUST STANDARD & STREAM CHECKER ---
+   # --- ROBUST STANDARD & STREAM CHECKER ---
     raw_std = str(student.class_standard).lower() if student and student.class_standard else "10"
     raw_stream = str(student.stream).lower() if student and student.stream else ""
     
@@ -414,7 +414,9 @@ def get_dashboard_stats(user_id: int, auth_db: Session = Depends(get_db), detail
     elif "10" in raw_std:
         clean_std = "10"
     else:
-        clean_std = "10" 
+        # THE FIX: Stop forcing unknown standards to "10". 
+        # Pass the actual standard (e.g., "bsc", "11") to the frontend.
+        clean_std = raw_std
         
     # Check combined string for stream keywords
     if "commerce" in combined_info:

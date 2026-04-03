@@ -181,22 +181,35 @@
                         // Default fallback to Science if empty or explicitly "Science"
                         subjects = ["Physics", "Chemistry", "Mathematics", "Biology", "English"];
                     }
-                } else {
-                    // Ultimate fallback
-                    subjects = ["Mathematics", "Science", "English"];
                 }
+                // Any other standard will leave 'subjects' as an empty array
 
-                // Render the cards dynamically
-                container.innerHTML = subjects.map(sub => `
-                    <div class="tool-option-card glass-style">
-                        <div class="icon-wrapper"><i class="fa-solid ${subjectIcons[sub] || 'fa-award'}" style="color: #f1c40f;"></i></div>
-                        <h2>${sub}</h2>
-                        <div class="card-actions">
-                            <button class="card-btn" onclick="startQuiz('${sub}')">Start Quiz</button>
-                            <button class="card-btn flash-btn" onclick="startFlashcards('${sub}')">Flash Card</button>
+                // Render the cards dynamically if subjects exist
+                if (subjects.length > 0) {
+                    container.innerHTML = subjects.map(sub => `
+                        <div class="tool-option-card glass-style">
+                            <div class="icon-wrapper"><i class="fa-solid ${subjectIcons[sub] || 'fa-award'}" style="color: #f1c40f;"></i></div>
+                            <h2>${sub}</h2>
+                            <div class="card-actions">
+                                <button class="card-btn" onclick="startQuiz('${sub}')">Start Quiz</button>
+                                <button class="card-btn flash-btn" onclick="startFlashcards('${sub}')">Flash Card</button>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('');
+                } else {
+                    // Coming Soon screen for standards 1-9, 11, bachelors, masters, etc.
+                    container.innerHTML = `
+                        <div class="tool-option-card glass-style" style="grid-column: 1 / -1; padding: 60px 20px; max-width: 600px; margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px dashed rgba(197, 166, 104, 0.5);">
+                            <div class="icon-wrapper" style="width: 90px; height: 90px; font-size: 45px; background: rgba(241, 196, 15, 0.1); margin-bottom: 25px;">
+                                <i class="fa-solid fa-gamepad" style="color: #f1c40f;"></i>
+                            </div>
+                            <h2 style="font-size: 26px; margin-bottom: 15px; color: #fff;">Leveling Up!</h2>
+                            <p style="color: rgba(255, 255, 255, 0.7); font-size: 16px; line-height: 1.6; max-width: 400px; text-align: center;">
+                                We are busy developing amazing quizzes and flashcards tailored for your class! Check back soon to start playing and learning.
+                            </p>
+                        </div>
+                    `;
+                }
 
             } catch (err) {
                 console.error("Dashboard error:", err);
