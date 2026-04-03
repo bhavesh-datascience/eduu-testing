@@ -2,51 +2,148 @@
     "Std_10": {
         "Mathematics": [
             {
-                "q": "Pythagoras Theorem",
-                "answer": "a² + b² = c²",
-                "explanation": "In a right-angled triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides."
-            }
-        ]
-    },
-    "Std_12": {
-        "Physics": [
-            {
-                "q": "Coulomb's Law",
-                "answer": "F = k * (q1*q2)/r²",
-                "explanation": "The force between two point charges is directly proportional to the product of the charges and inversely proportional to the square of the distance between them."
-            },
-            {
-                "q": "Photoelectric Effect",
-                "answer": "Ejection of electrons",
-                "explanation": "The emission of electrons when electromagnetic radiation, such as light, hits a material."
+                "q": "What is the formula for the roots of a quadratic equation?",
+                "answer": "x = [-b ± √(b² - 4ac)] / 2a",
+                "explanation": "This is known as the quadratic formula."
             }
         ],
-        "Chemistry": [
+        "Science": [
             {
-                "q": "Raoult's Law",
-                "answer": "P_solution = X_solvent * P_solvent",
-                "explanation": "The partial vapour pressure of each volatile component in a solution is directly proportional to its mole fraction."
+                "q": "What is the SI unit of Electric Current?",
+                "answer": "Ampere (A)",
+                "explanation": "It is measured using an instrument called an ammeter."
             }
         ],
-        "Mathematics": [
+        "Social Science": [
             {
-                "q": "Derivative of e^x",
-                "answer": "e^x",
-                "explanation": "The exponential function e^x is unique because it is its own derivative."
-            }
-        ],
-        "Biology": [
-            {
-                "q": "Double Fertilization",
-                "answer": "Unique to Angiosperms",
-                "explanation": "Involves the joining of a female gametophyte with two male gametes."
+                "q": "Who wrote 'Hind Swaraj'?",
+                "answer": "Mahatma Gandhi",
+                "explanation": "It was written in 1909 and expresses his views on Swaraj and modern civilization."
             }
         ],
         "English": [
             {
-                "q": "Theme of 'The Last Lesson'",
+                "q": "Who is the author of 'A Letter to God'?",
+                "answer": "G.L. Fuentes",
+                "explanation": "The story is about a farmer named Lencho who writes a letter to God asking for money."
+            }
+        ],
+        "Hindi": [
+            {
+                "q": "संदेह अलंकार का एक उदाहरण दें।",
+                "answer": "सारी बिच नारी है कि नारी बिच सारी है।",
+                "explanation": "जहाँ रूप, रंग और गुण की समानता के कारण किसी वस्तु को देखकर यह निश्चय न हो कि यह वही वस्तु है या कोई और।"
+            }
+        ]
+    },
+    "Std_12_Science": {
+        "Physics": [
+            {
+                "q": "What is Gauss's Law in electrostatics?",
+                "answer": "ΦE = q / ε₀",
+                "explanation": "The total electric flux out of a closed surface is equal to the charge enclosed divided by the permittivity."
+            }
+        ],
+        "Chemistry": [
+            {
+                "q": "What is the formula for Raoult's Law?",
+                "answer": "P₁ = P₁⁰ × x₁",
+                "explanation": "The partial vapor pressure of each component of an ideal mixture of liquids is equal to the vapor pressure of the pure component multiplied by its mole fraction."
+            }
+        ],
+        "Biology": [
+            {
+                "q": "What is the powerhouse of the cell?",
+                "answer": "Mitochondria",
+                "explanation": "It generates most of the chemical energy needed to power the cell's biochemical reactions."
+            }
+        ],
+        "Mathematics": [
+            {
+                "q": "Derivative of sin(x)?",
+                "answer": "cos(x)",
+                "explanation": "The rate of change of the sine function is the cosine function."
+            }
+        ],
+        "English": [
+            {
+                "q": "What is the central theme of 'The Last Lesson'?",
                 "answer": "Linguistic Chauvinism",
-                "explanation": "The story emphasizes the importance of one's mother tongue and the pain of losing it to an oppressor."
+                "explanation": "It highlights the pain of losing one's native language and freedom."
+            }
+        ]
+    },
+    "Std_12_Commerce": {
+        "Accountancy": [
+            {
+                "q": "What is the Accounting Equation?",
+                "answer": "Assets = Liabilities + Equity",
+                "explanation": "This is the foundation of the double-entry accounting system."
+            }
+        ],
+        "Business Studies": [
+            {
+                "q": "What are the 4 P's of Marketing?",
+                "answer": "Product, Price, Place, Promotion",
+                "explanation": "These are the key factors that are involved in the marketing of a good or service."
+            }
+        ],
+        "Economics": [
+            {
+                "q": "Define 'Opportunity Cost'.",
+                "answer": "The value of the next best alternative forgone.",
+                "explanation": "It represents the benefits an individual, investor or business misses out on when choosing one alternative over another."
+            }
+        ],
+        "Mathematics": [
+            {
+                "q": "What is an Identity Matrix?",
+                "answer": "A square matrix with 1s on the main diagonal and 0s elsewhere.",
+                "explanation": "Multiplying a matrix by an identity matrix leaves it unchanged."
+            }
+        ],
+        "English": [
+            {
+                "q": "Who wrote 'My Mother at Sixty-six'?",
+                "answer": "Kamala Das",
+                "explanation": "The poem explores the theme of advancing age and the fear of loss and separation."
+            }
+        ]
+    },
+    "Std_12_Arts": {
+        "History": [
+            {
+                "q": "When was the Permanent Settlement of Bengal introduced?",
+                "answer": "1793",
+                "explanation": "It was introduced by Lord Cornwallis to fix the land revenue."
+            }
+        ],
+        "Geography": [
+            {
+                "q": "What is 'Demographic Dividend'?",
+                "answer": "Economic growth brought on by a change in the population age structure.",
+                "explanation": "It occurs when the working-age population is larger than the non-working-age share of the population."
+            }
+        ],
+        "Political Science": [
+            {
+                "q": "When did the Berlin Wall fall?",
+                "answer": "November 1989",
+                "explanation": "This event symbolized the end of the Cold War and led to the reunification of Germany."
+            }
+        ],
+        "Sociology": [
+            {
+                "q": "Define 'Social Stratification'.",
+                "answer": "A society's categorization of its people into groups based on socioeconomic factors.",
+                "explanation": "Factors include wealth, income, race, education, and power."
+            }
+        ],
+        "English": [
+            {
+                "q": "In 'Deep Water', what phobia does the author overcome?",
+                "answer": "Hydrophobia (Fear of water)",
+                "explanation": "William Douglas overcomes his childhood fear of water through sheer determination and practice."
             }
         ]
     }

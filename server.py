@@ -680,7 +680,7 @@ def get_quiz_dashboard(): return FileResponse("quiz-dashboard.html")
 def get_quiz_flow(): return FileResponse("quiz-flow.html")
 
 @app.get("/flashcardpage")
-def get_flashcard_page(): return FileResponse("flashcard.html")
+def get_flashcard_page(): return FileResponse("flashcards.html")
 
 app.mount("/", StaticFiles(directory=".", html=True), name="static")
 
