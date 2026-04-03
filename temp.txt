@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Morphing Dashboard</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* --- Sidebar Colors --- */
+            --sb-teal: #68B2BA;       /* Edunovaq Default */
+            --sb-green: #2E7D56;      /* Sentinel Hover */
+            --sb-text: #ffffff;       
+            
+            /* --- Dimensions --- */
+            --sb-width-collapsed: 90px;
+            --sb-width-expanded: 260px;
+            --curve-size: 30px;
+
+            /* --- Main Content Variables --- */
+            --bg-main: #F8F5F0;       /* Cream background */
+            --card-bg: #ffffff;
+            --accent-gold: #C5A668;   
+            --text-dark: #333333;
+            --text-muted: #888888;
+            --border-radius-card: 24px;
+            --transition-speed: 0.4s;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* =========================================
+           SIDEBAR TRANSFORMATION LOGIC
+           ========================================= */
+        .sidebar {
+            /* Default State: Edunovaq Teal */
+            background-color: var(--sb-teal);
+            width: var(--sb-width-collapsed);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 0;
+            color: var(--sb-text);
+            font-family: 'Poppins', sans-serif;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 100;
+            
+            /* Smooth Transition for Color and Width */
+            transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1),
+                        background-color var(--transition-speed) ease;
+        }
+
+        /* Hover State: Sentinel Green */
+        .sidebar:hover {
+            width: var(--sb-width-expanded);
+            background-color: var(--sb-green);
+        }
+
+        /* Brand Area */
+        .brand {
+            display: flex;
+            align-items: center;
+            height: 50px;
+            margin-bottom: 40px;
+            padding-left: 28px; /* Fixed padding aligns icon */
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .brand i { 
+            font-size: 26px; 
+            min-width: 35px; 
+            margin-right: 10px; 
+        }
+        .brand span {
+            font-size: 20px;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        /* Show Text on Hover */
+        .sidebar:hover .brand span { opacity: 1; }
+
+
+        /* Navigation Links */
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item { width: 100%; position: relative; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            padding-left: 30px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.85);
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link i {
+            font-size: 22px;
+            min-width: 35px;
+            margin-right: 15px;
+            text-align: center;
+        }
+
+        .nav-link span {
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s;
+        }
+
+        /* Show Text Labels on Sidebar Hover */
+        .sidebar:hover .nav-link span {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+
+        /* --- DEFAULT ACTIVE STATE (Teal Mode) --- */
+        /* Simple highlight when sidebar is collapsed */
+        .nav-link.active {
+            color: #fff;
+        }
+        .nav-link.active::before {
+            content: ''; 
+            display: none; /* Hide curves by default */
+        }
+        
+        
+        /* --- HOVER ACTIVE STATE (Green Mode) --- */
+        /* This applies the Liquid Curve only when Sidebar is HOVERED */
+        
+        .sidebar:hover .nav-link:hover,
+        .sidebar:hover .nav-link.active {
+            background-color: var(--bg-main); /* Cream Background */
+            color: var(--sb-green);           /* Green Text/Icon */
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+        }
+
+        /* Top Liquid Curve */
+        .sidebar:hover .nav-link:hover::before,
+        .sidebar:hover .nav-link.active::before {
+            content: '';
+            display: block;
+            position: absolute;
+            right: 0;
+            top: -30px;
+            width: 30px;
+            height: 30px;
+            background: transparent;
+            background-image: radial-gradient(circle at bottom left, transparent 29px, var(--bg-main) 30px);
+            pointer-events: none;
+        }
+
+        /* Bottom Liquid Curve */
+        .sidebar:hover .nav-link:hover::after,
+        .sidebar:hover .nav-link.active::after {
+            content: '';
+            display: block;
+            position: absolute;
+            right: 0;
+            bottom: -30px;
+            width: 30px;
+            height: 30px;
+            background: transparent;
+            background-image: radial-gradient(circle at top left, transparent 29px, var(--bg-main) 30px);
+            pointer-events: none;
+        }
+
+
+        /* Bottom Menu */
+        .bottom-menu { margin-top: auto; padding-bottom: 20px;}
+
+        /* =========================================
+           MAIN CONTENT
+           ========================================= */
+        .main-container {
+            flex-grow: 1;
+            padding: 25px 40px;
+            overflow-y: auto;
+            background-color: var(--bg-main);
+        }
+
+        /* Header */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            background: #EBEBEB;
+            padding: 12px 25px;
+            border-radius: 20px;
+            width: 350px;
+            display: flex;
+            align-items: center;
+            color: var(--text-muted);
+        }
+        .search-bar input {
+            border: none; background: transparent; outline: none; margin-left: 15px; width: 100%;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 25px; color: var(--text-dark); }
+        .user-profile { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+        .user-profile img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+
+        /* Dashboard Grid */
+        .dashboard-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 30px; }
+        .col-main, .col-sidebar { display: flex; flex-direction: column; gap: 30px; }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-card);
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+            font-weight: 800; font-size: 18px; color: var(--accent-gold); font-family: 'Nunito', sans-serif;
+        }
+
+        /* Hero */
+        .hero-banner {
+            background-color: var(--bg-main); border: 2px solid #EAE4D6;
+            display: flex; justify-content: space-between; align-items: center; padding: 35px 45px; min-height: 200px;
+        }
+        .hero-content h1 { font-family: 'DM Serif Display', serif; font-size: 38px; color: var(--accent-gold); margin-bottom: 12px; }
+        .hero-content p { color: var(--text-muted); max-width: 420px; margin-bottom: 25px; line-height: 1.5; }
+        .hero-btn { color: var(--accent-gold); font-weight: 800; text-decoration: underline; font-size: 16px; }
+        .hero-illustration { font-size: 90px; color: var(--text-dark); opacity: 0.15; }
+
+        /* Widgets */
+        .widgets-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .widget {
+            background: var(--bg-main); border: 2px solid #EAE4D6; text-align: center; height: 190px;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px; border-radius: 24px;
+        }
+        .widget h3 { color: var(--accent-gold); font-size: 16px; font-weight: 800; align-self: flex-start; }
+        .widget-icon { font-size: 55px; color: var(--accent-gold); margin-bottom: 25px; }
+
+        /* Charts */
+        .charts-row { display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
+        .chart-container { position: relative; height: 160px; width: 100%; }
+
+        /* Calendar */
+        .calendar-nav {
+            display: flex; justify-content: space-between; margin-bottom: 15px; background: #F2F2F2;
+            padding: 8px 15px; border-radius: 12px; font-weight: 700; font-size: 14px;
+        }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 6px; font-size: 13px; }
+        .cal-head { color: #aaa; font-weight: 700; margin-bottom: 8px; }
+        .cal-day { padding: 6px; border-radius: 50%; cursor: pointer; }
+        .cal-day.active { background-color: var(--accent-gold); color: white; font-weight: bold; }
+
+        /* Lists */
+        .list-row { display: flex; align-items: center; margin-bottom: 15px; background: var(--bg-main); padding: 12px 15px; border-radius: 16px; }
+        .list-icon { color: var(--accent-gold); margin-right: 15px; font-size: 20px; }
+        .tutor-pic { width: 38px; height: 38px; border-radius: 50%; margin-right: 12px; object-fit: cover;}
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <i class="<div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>"></i>
+            <span>Edunovaq</span>
+        </div>
+
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="#" class="nav-link active" onclick="setActive(this)">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <span>Focus</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="setActive(this)">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>AI Tools</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="setActive(this)">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Group Study</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="setActive(this)">
+                    <i class="fa-solid fa-toolbox"></i>
+                    <span>Tools</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-list bottom-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="setActive(this)">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Setting</span>
+                </a>
+            </li>
+        </div>
+    </nav>
+
+
+    <main class="main-container">
+        
+        <header class="top-header">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search">
+            </div>
+            <div class="header-actions">
+                <i class="fa-regular fa-envelope"></i>
+                <i class="fa-regular fa-bell"></i>
+                <div class="user-profile">
+                    <img src="https://i.pravatar.cc/150?img=5" alt="Leslie">
+                    <span>Leslie Alexander <i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="col-main">
+                <div class="card hero-banner">
+                    <div class="hero-content">
+                        <h1>Hello Leslie</h1>
+                        <p>I have assigned you a new task. I want you to finish it by tomorrow evening.</p>
+                        <a href="#" class="hero-btn">Review It</a>
+                    </div>
+                    <div class="hero-illustration">
+                        <i class="fa-solid fa-book-open-reader"></i>
+                    </div>
+                </div>
+
+                <div class="widgets-row">
+                    <div class="widget">
+                        <h3>My Progress</h3>
+                        <div class="widget-icon"><i class="fa-solid fa-trophy"></i></div>
+                    </div>
+                    <div class="widget">
+                        <h3>Assignments</h3>
+                        <div class="widget-icon"><i class="fa-solid fa-laptop-file"></i></div>
+                    </div>
+                    <div class="widget">
+                        <h3>Recent Sessions</h3>
+                        <div class="widget-icon"><i class="fa-solid fa-desktop"></i></div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="card">
+                        <div class="card-header">Performance</div>
+                        <div class="chart-container">
+                            <canvas id="perfChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Attendance</div>
+                        <div class="chart-container">
+                            <canvas id="attChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sidebar">
+                <div class="card">
+                    <div class="card-header">Upcoming Sessions</div>
+                    <div class="calendar-nav">
+                        <span>July</span>
+                        <span>2024 <i class="fa-solid fa-chevron-down"></i></span>
+                    </div>
+                    <div class="cal-grid">
+                        <div class="cal-head">Su</div><div class="cal-head">Mo</div><div class="cal-head">Tu</div>
+                        <div class="cal-head">We</div><div class="cal-head">Th</div><div class="cal-head">Fr</div><div class="cal-head">Sa</div>
+                        <span style="color:#ccc">29</span><span style="color:#ccc">30</span>
+                        <span>1</span><span class="cal-day active">2</span><span>3</span><span>4</span><span>5</span>
+                        <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span class="cal-day active">11</span>
+                        <span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span>
+                        <span>19</span><span class="cal-day active">20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span>
+                        <span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Tests & Exams</div>
+                    <div class="list-row">
+                        <i class="fa-regular fa-calendar-check list-icon"></i>
+                        <div><h4>06 July</h4><p style="font-size:11px; color:#888">12:00pm - 1:30pm</p></div>
+                    </div>
+                    <div class="list-row">
+                        <i class="fa-regular fa-calendar-check list-icon"></i>
+                        <div><h4>11 July</h4><p style="font-size:11px; color:#888">10:00pm - 12:30pm</p></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Your Tutor</div>
+                    <div class="list-row">
+                        <img src="https://i.pravatar.cc/150?img=1" class="tutor-pic">
+                        <div><h4>Jenny Wilson</h4><p style="font-size:11px; color:#888">English</p></div>
+                    </div>
+                    <div class="list-row">
+                        <img src="https://i.pravatar.cc/150?img=3" class="tutor-pic">
+                        <div><h4>Ronald Richards</h4><p style="font-size:11px; color:#888">Social Science</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function setActive(element) {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        const ctxP = document.getElementById('perfChart').getContext('2d');
+        const centerText = {
+            id: 'centerText',
+            beforeDraw: function(chart) {
+                var width = chart.width, height = chart.height, ctx = chart.ctx;
+                ctx.restore();
+                ctx.font = "800 24px Nunito";
+                ctx.fillStyle = "#C5A668";
+                ctx.textBaseline = "middle";
+                var text = "68%", textX = Math.round((width - ctx.measureText(text).width)/2), textY = height/2;
+                ctx.fillText(text, textX, textY);
+                ctx.save();
+            }
+        };
+        new Chart(ctxP, {
+            type: 'doughnut',
+            data: { datasets: [{ data: [68, 32], backgroundColor: ['#C5A668', '#F0F0F0'], borderWidth: 0, cutout: '80%', borderRadius: 20 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}, tooltip: {enabled: false} } },
+            plugins: [centerText]
+        });
+
+        const ctxA = document.getElementById('attChart').getContext('2d');
+        new Chart(ctxA, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                datasets: [
+                    { label: 'Maths', data: [45, 75, 45, 85, 50, 70], backgroundColor: '#C5A668', borderRadius: 4 },
+                    { label: 'Sci', data: [30, 60, 35, 65, 40, 60], backgroundColor: '#E6DCC3', borderRadius: 4 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { x: {display: false}, y: {display: false} }, plugins: { legend: {display: true} } }
+        });
+    </script>
+</body>
+</html>
+
+
+code 2
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Style Sidebar</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* --- Colors --- */
+            --med-teal: #C5A668;      /* State 1 Color */
+            --sentinel-green: #C5A668; /* State 2 Color */
+            --text-white: #ffffff;
+            
+            /* --- Layout --- */
+            --bg-main: #F8F5F0;
+            --card-bg: #ffffff;
+            --accent-gold: #C5A668;
+            --text-dark: #333333;
+            --text-muted: #888888;
+            --border-radius-card: 24px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* =========================================
+           DUAL NAV SIDEBAR
+           ========================================= */
+        .sidebar {
+            /* --- STATE 1: Edunovaq (Default) --- */
+            background-color: var(--med-teal);
+            width: 90px; /* Slim width */
+            height: 96vh; /* Floating height */
+            margin: 2vh 0 2vh 15px; /* Floating margin */
+            display: flex;
+            flex-direction: column;
+            padding: 30px 0;
+            color: var(--text-white);
+            font-family: 'Poppins', sans-serif;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 100;
+            
+            /* Edunovaq Shape: Rounded Top & Bottom Right */
+            border-top-right-radius: 40px;
+            border-bottom-right-radius: 40px;
+            border-top-left-radius: 20px;
+            border-bottom-left-radius: 20px;
+
+            /* Smooth Morphing Transition */
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+        }
+
+        /* --- STATE 2: SENTINEL (Hover) --- */
+        .sidebar:hover {
+            background-color: var(--sentinel-green);
+            width: 260px; /* Wide width */
+            height: 100vh; /* Full height */
+            margin: 0; /* Remove margins */
+            
+            /* Sentinel Shape: Only Top Right Curved (Red Circle area) */
+            border-top-right-radius: 60px;
+            border-bottom-right-radius: 0;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        /* Brand / Logo */
+        .brand {
+            display: flex;
+            align-items: center;
+            height: 50px;
+            margin-bottom: 40px;
+            padding-left: 30px; /* Fixed padding keeps icon steady */
+            white-space: nowrap;
+        }
+        .brand i { font-size: 28px; min-width: 30px; margin-right: 15px; }
+        .brand span { font-size: 20px; font-weight: 700; opacity: 0; transition: opacity 0.3s; }
+        
+        .sidebar:hover .brand span { opacity: 1; } /* Show text on hover */
+
+        /* Nav List */
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        /* Nav Link Items */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            height: 55px;
+            padding-left: 32px; /* Center align icon in slim mode */
+            text-decoration: none;
+            color: rgba(255,255,255,0.75);
+            font-weight: 500;
+            transition: all 0.2s;
+            position: relative;
+            white-space: nowrap;
+            margin-left: 10px; /* Gap from left edge */
+        }
+
+        .nav-link i { font-size: 22px; min-width: 30px; margin-right: 15px; text-align: center; }
+        .nav-link span { opacity: 0; transform: translateX(10px); transition: all 0.3s; }
+
+        .sidebar:hover .nav-link span { opacity: 1; transform: translateX(0); } /* Slide text in */
+
+        /* --- HOVER EFFECTS --- */
+        
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.2); /* Light background highlight */
+            
+            /* SQUARE TAB STYLE (As requested) */
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .bottom-menu { margin-top: auto; padding-bottom: 20px;}
+
+
+        /* =========================================
+           MAIN CONTENT (Joyous School)
+           ========================================= */
+        .main-container {
+            flex-grow: 1;
+            padding: 25px 40px;
+            overflow-y: auto;
+            background-color: var(--bg-main);
+        }
+
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .search-bar { background: #EBEBEB; padding: 12px 25px; border-radius: 20px; width: 350px; display: flex; align-items: center; color: var(--text-muted); }
+        .search-bar input { border: none; background: transparent; outline: none; margin-left: 15px; width: 100%; }
+        .header-actions { display: flex; align-items: center; gap: 25px; color: var(--text-dark); }
+        .user-profile { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+        .user-profile img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+
+        .dashboard-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 30px; }
+        .col-main, .col-sidebar { display: flex; flex-direction: column; gap: 30px; }
+
+        .card { background: var(--card-bg); border-radius: var(--border-radius-card); padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 800; font-size: 18px; color: var(--accent-gold); font-family: 'Nunito', sans-serif; }
+
+        .hero-banner { background-color: var(--bg-main); border: 2px solid #EAE4D6; display: flex; justify-content: space-between; align-items: center; padding: 35px 45px; min-height: 200px; }
+        .hero-content h1 { font-family: 'DM Serif Display', serif; font-size: 38px; color: var(--accent-gold); margin-bottom: 12px; }
+        .hero-content p { color: var(--text-muted); max-width: 420px; margin-bottom: 25px; line-height: 1.5; }
+        .hero-btn { color: var(--accent-gold); font-weight: 800; text-decoration: underline; font-size: 16px; }
+        .hero-illustration { font-size: 90px; color: var(--text-dark); opacity: 0.15; }
+
+        .widgets-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .widget { background: var(--bg-main); border: 2px solid #EAE4D6; text-align: center; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px; border-radius: 24px; }
+        .widget h3 { color: var(--accent-gold); font-size: 16px; font-weight: 800; align-self: flex-start; }
+        .widget-icon { font-size: 55px; color: var(--accent-gold); margin-bottom: 25px; }
+
+        .charts-row { display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
+        .chart-container { position: relative; height: 160px; width: 100%; }
+
+        .calendar-nav { display: flex; justify-content: space-between; margin-bottom: 15px; background: #F2F2F2; padding: 8px 15px; border-radius: 12px; font-weight: 700; font-size: 14px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 6px; font-size: 13px; }
+        .cal-head { color: #aaa; font-weight: 700; margin-bottom: 8px; }
+        .cal-day { padding: 6px; border-radius: 50%; cursor: pointer; }
+        .cal-day.active { background-color: var(--accent-gold); color: white; font-weight: bold; }
+
+        .list-row { display: flex; align-items: center; margin-bottom: 15px; background: var(--bg-main); padding: 12px 15px; border-radius: 16px; }
+        .list-icon { color: var(--accent-gold); margin-right: 15px; font-size: 20px; }
+        .tutor-pic { width: 38px; height: 38px; border-radius: 50%; margin-right: 12px; object-fit: cover;}
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <i class="<div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>"></i>
+            <span>Edunovaq</span>
+        </div>
+
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="#" class="nav-link active" onclick="setActive(this)">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <span>Focus</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="setActive(this)">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>AI Tools</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="setActive(this)">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Group Study</span>
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="setActive(this)">
+                    <i class="fa-solid fa-toolbox"></i>
+                    <span>Tools</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-list bottom-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="setActive(this)">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Setting</span>
+                </a>
+            </li>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <header class="top-header">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search">
+            </div>
+            <div class="header-actions">
+                <i class="fa-regular fa-envelope"></i>
+                <i class="fa-regular fa-bell"></i>
+                <div class="user-profile">
+                    <img src="https://i.pravatar.cc/150?img=5" alt="Leslie">
+                    <span>Leslie Alexander <i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="col-main">
+                <div class="card hero-banner">
+                    <div class="hero-content">
+                        <h1>Hello Leslie</h1>
+                        <p>I have assigned you a new task. I want you to finish it by tomorrow evening.</p>
+                        <a href="#" class="hero-btn">Review It</a>
+                    </div>
+                    <div class="hero-illustration">
+                        <i class="fa-solid fa-book-open-reader"></i>
+                    </div>
+                </div>
+
+                <div class="widgets-row">
+                    <div class="widget">
+                        <h3>My Progress</h3>
+                        <div class="widget-icon"><i class="fa-solid fa-trophy"></i></div>
+                    </div>
+                    <div class="widget">
+                        <h3>Assignments</h3>
+                        <div class="widget-icon"><i class="fa-solid fa-laptop-file"></i></div>
+                    </div>
+                    <div class="widget">
+                        <h3>Recent Sessions</h3>
+                        <div class="widget-icon"><i class="fa-solid fa-desktop"></i></div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="card">
+                        <div class="card-header">Performance</div>
+                        <div class="chart-container">
+                            <canvas id="perfChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Attendance</div>
+                        <div class="chart-container">
+                            <canvas id="attChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sidebar">
+                <div class="card">
+                    <div class="card-header">Upcoming Sessions</div>
+                    <div class="calendar-nav">
+                        <span>July</span>
+                        <span>2024 <i class="fa-solid fa-chevron-down"></i></span>
+                    </div>
+                    <div class="cal-grid">
+                        <div class="cal-head">Su</div><div class="cal-head">Mo</div><div class="cal-head">Tu</div>
+                        <div class="cal-head">We</div><div class="cal-head">Th</div><div class="cal-head">Fr</div><div class="cal-head">Sa</div>
+                        <span style="color:#ccc">29</span><span style="color:#ccc">30</span>
+                        <span>1</span><span class="cal-day active">2</span><span>3</span><span>4</span><span>5</span>
+                        <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span class="cal-day active">11</span>
+                        <span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span>
+                        <span>19</span><span class="cal-day active">20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span>
+                        <span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Tests & Exams</div>
+                    <div class="list-row">
+                        <i class="fa-regular fa-calendar-check list-icon"></i>
+                        <div><h4>06 July</h4><p style="font-size:11px; color:#888">12:00pm - 1:30pm</p></div>
+                    </div>
+                    <div class="list-row">
+                        <i class="fa-regular fa-calendar-check list-icon"></i>
+                        <div><h4>11 July</h4><p style="font-size:11px; color:#888">10:00pm - 12:30pm</p></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Your Tutor</div>
+                    <div class="list-row">
+                        <img src="https://i.pravatar.cc/150?img=1" class="tutor-pic">
+                        <div><h4>Jenny Wilson</h4><p style="font-size:11px; color:#888">English</p></div>
+                    </div>
+                    <div class="list-row">
+                        <img src="https://i.pravatar.cc/150?img=3" class="tutor-pic">
+                        <div><h4>Ronald Richards</h4><p style="font-size:11px; color:#888">Social Science</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function setActive(element) {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        const ctxP = document.getElementById('perfChart').getContext('2d');
+        const centerText = {
+            id: 'centerText',
+            beforeDraw: function(chart) {
+                var width = chart.width, height = chart.height, ctx = chart.ctx;
+                ctx.restore();
+                ctx.font = "800 24px Nunito";
+                ctx.fillStyle = "#C5A668";
+                ctx.textBaseline = "middle";
+                var text = "68%", textX = Math.round((width - ctx.measureText(text).width)/2), textY = height/2;
+                ctx.fillText(text, textX, textY);
+                ctx.save();
+            }
+        };
+        new Chart(ctxP, {
+            type: 'doughnut',
+            data: { datasets: [{ data: [68, 32], backgroundColor: ['#C5A668', '#F0F0F0'], borderWidth: 0, cutout: '80%', borderRadius: 20 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}, tooltip: {enabled: false} } },
+            plugins: [centerText]
+        });
+
+        const ctxA = document.getElementById('attChart').getContext('2d');
+        new Chart(ctxA, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                datasets: [
+                    { label: 'Maths', data: [45, 75, 45, 85, 50, 70], backgroundColor: '#C5A668', borderRadius: 4 },
+                    { label: 'Sci', data: [30, 60, 35, 65, 40, 60], backgroundColor: '#E6DCC3', borderRadius: 4 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { x: {display: false}, y: {display: false} }, plugins: { legend: {display: true} } }
+        });
+    </script>
+</body>
+</html>

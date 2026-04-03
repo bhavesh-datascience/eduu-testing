@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edunovaq - Focus</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+</head>
+
+<body>
+
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" id="logout-link">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+        <header class="top-header" style="justify-content: flex-end; width: 100%;">
+            <div class="header-actions" style="display: flex; align-items: center; gap: 20px;">
+                <i class="fa-regular fa-bell" style="font-size: 20px; cursor: pointer;"></i>
+
+                <div class="user-profile glass-style">
+                    <div id="profile-img-placeholder"
+                        style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; border: 1px solid rgba(255,255,255,0.4);">
+                        U
+                    </div>
+                    <span id="profile-name-display">Loading...</span>
+                </div>
+
+                <i class="fa-solid fa-arrow-right-from-bracket" id="logout-icon"
+                    style="font-size: 20px; cursor: pointer; color: rgba(255,255,255,0.7);" title="Logout"></i>
+            </div>
+        </header>
+
+        <h1 class="page-title">Focus Zone</h1>
+
+        <div class="focus-grid">
+
+            <div class="focus-card glass-style" id="pomodoro-card" style="padding: 40px 30px;">
+                <div id="pomodoro-intro"
+                    style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                    <div class="icon-wrapper"><i class="fa-solid fa-hourglass-half"></i></div>
+                    <h2>Pomodoro</h2>
+                    <p>Master your time with 25-minute focused work intervals followed by short, rejuvenating breaks.
+                    </p>
+                    <a href="pomodoro.html" class="card-btn"
+                        style="margin-top: 10px; display: inline-block; text-decoration: none;">Start Session</a>
+                </div>
+            </div>
+
+            <div class="focus-card glass-style"
+                style="grid-column: 2; grid-row: 1 / span 2; display:flex; flex-direction:column; justify-content:flex-start;">
+                <div class="icon-wrapper"><i class="fa-regular fa-calendar"></i></div>
+                <h2>Your Schedule</h2>
+                <p>Stay on track with today's goals.</p>
+
+                <div class="schedule-list" id="schedule-list-container"
+                    style="width:100%; flex-grow:1; overflow-y: auto; max-height: 350px; padding-right: 5px;">
+                </div>
+
+                <a href="calendar.html" class="card-btn"
+                    style="width:100%; margin-top: 15px; display: block; text-decoration: none;">View Full Calendar</a>
+            </div>
+
+            <div class="focus-card glass-style">
+                <div class="icon-wrapper"><i class="fa-solid fa-ban"></i></div>
+                <h2>Scroll Block</h2>
+                <p>Prevent doom-scrolling on social media.</p>
+                <div class="toggle-wrapper">
+                    <span style="font-size:16px; font-weight:700; opacity:0.7;">Off</span>
+                    <label class="toggle-switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="focus-script.js?v=6"></script>
+</body>
+
+</html>

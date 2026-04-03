@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edunovaq - Calendar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+</head>
+
+<body>
+
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" id="logout-link">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+        <header class="top-header">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="focus.html"
+                    style="color: white; text-decoration: none; font-size: 24px; opacity: 0.8; transition: 0.3s;"
+                    title="Back"><i class="fa-solid fa-arrow-left"></i></a>
+                <h1 class="page-title" style="margin: 0;">Full Calendar & Schedule</h1>
+            </div>
+
+            <div class="header-actions">
+
+        </header>
+
+        <div style="display: flex; justify-content: center; padding-top: 20px;">
+            <div class="focus-card glass-style"
+                style="width: 100%; max-width: 700px; display:flex; flex-direction:column; padding: 40px;">
+                <div class="icon-wrapper"><i class="fa-regular fa-calendar-plus"></i></div>
+
+                <h2 id="schedule-date-title">Manage Your Timetable</h2>
+                <p id="schedule-date-subtitle">Add new study sessions or tasks to your daily timeline.</p>
+
+                <div class="schedule-inputs" style="margin-top: 20px;">
+                    <input type="text" id="task-name" placeholder="Task Name (e.g., Anatomy Review)">
+                    <div class="schedule-time-row">
+                        <input type="time" id="task-start" title="Start Time">
+                        <input type="time" id="task-end" title="End Time">
+                    </div>
+                    <button id="add-task-btn" class="card-btn" style="width: 100%; padding: 12px; margin-top: 10px;">+
+                        Add Task</button>
+                </div>
+
+                <div class="schedule-list" id="full-schedule-list-container" style="width:100%; margin-top: 30px;">
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="calendar-script.js?v=2"></script>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edunovaq - Quiz Dashboard</title>
+    <link rel="icon" type="image/webp" href="1.webp">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <style>
+        /* Force 2 cards per row as per reference */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .tool-option-card {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .card-actions .card-btn {
+            flex: 1;
+            padding: 12px 10px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .flash-btn {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: #fff !important;
+        }
+
+        .flash-btn:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-color: #C5A668 !important;
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="logout()">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+        <header class="top-header" style="justify-content: space-between; width: 100%;">
+            <div class="global-back-btn" style="display: flex; align-items: center; gap: 12px; cursor: pointer;"
+                onclick="window.location.href='tools.html'">
+                <i class="fa-solid fa-arrow-left" style="font-size: 22px;"></i>
+                <h1 class="page-title" style="margin-bottom: 0;">Quiz</h1>
+            </div>
+
+            <div class="header-actions" style="display: flex; align-items: center; gap: 20px;">
+                <i class="fa-regular fa-bell" style="font-size: 20px; cursor: pointer;"></i>
+                <div class="user-profile glass-style">
+                    <div id="profile-img-placeholder"
+                        style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; border: 1px solid rgba(255,255,255,0.4);">
+                        U</div>
+                    <span id="profile-name-display">Loading...</span>
+                </div>
+                <i class="fa-solid fa-arrow-right-from-bracket" id="logout-icon"
+                    style="font-size: 20px; cursor: pointer; color: rgba(255,255,255,0.7);" title="Logout"></i>
+            </div>
+        </header>
+
+        <div class="tools-grid" id="subjects-container">
+        </div>
+    </main>
+
+    <script src="dashboard-script.js"></script>
+    <script>
+        const subjectIcons = {
+            "Mathematics": "fa-calculator",
+            "Science": "fa-flask",
+            "Physics": "fa-atom",
+            "Chemistry": "fa-vial",
+            "Biology": "fa-dna",
+            "English": "fa-book-open",
+            "Social Science": "fa-globe",
+            "Hindi": "fa-language"
+        };
+
+        async function initDashboard() {
+            // Try to get ID from multiple common keys
+            let userId = localStorage.getItem('user_id') || JSON.parse(localStorage.getItem('user') || '{}').id;
+
+            if (!userId) {
+                console.warn("No User ID. Redirecting...");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const container = document.getElementById('subjects-container');
+
+            try {
+                // We use the new dynamic API to see what the user is eligible for
+                const response = await fetch(`/api/gamification-data/${userId}/Mathematics/quiz`);
+                const result = await response.json();
+
+                let subjects = [];
+                if (result.standard === "10") {
+                    subjects = ["Mathematics", "Science", "Social Science", "English", "Hindi"];
+                } else {
+                    subjects = ["Physics", "Chemistry", "Mathematics", "Biology", "English"];
+                }
+
+                container.innerHTML = subjects.map(sub => `
+            <div class="tool-option-card glass-style">
+                <div class="icon-wrapper"><i class="fa-solid fa-award" style="color: #f1c40f;"></i></div>
+                <h2>${sub}</h2>
+                <div class="card-actions">
+                    <button class="card-btn" onclick="startQuiz('${sub}')">Start Quiz</button>
+                    <button class="card-btn flash-btn" onclick="startFlashcards('${sub}')">Flash Card</button>
+                </div>
+            </div>
+        `).join('');
+            } catch (err) {
+                container.innerHTML = "<p>Please complete your profile details to see the quizzes.</p>";
+            }
+        }
+        function startQuiz(subject) {
+            localStorage.setItem('selectedQuizSubject', subject);
+            window.location.href = 'quiz-flow.html';
+        }
+
+        function startFlashcards(subject) {
+            localStorage.setItem('selectedQuizSubject', subject);
+            window.location.href = 'flashcard.html';
+        }
+
+        initDashboard();
+    </script>
+</body>
+
+</html>

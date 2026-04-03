@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edunovaq - AI Scheduler</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <style>
+        .scheduler-input-container {
+            margin-bottom: 30px;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: var(--text-white);
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        .prompt-textarea:focus {
+            outline: none;
+            border-color: var(--text-white);
+        }
+
+        .schedule-table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-white);
+            min-width: 600px;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
+        }
+
+        .schedule-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .schedule-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        /* New Styles for Date Picker Input */
+        input[type="date"].date-picker-styled {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 30px;
+            outline: none;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+        }
+
+        input[type="date"].date-picker-styled::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.8;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" id="logout-link">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+
+        <header class="top-header" style="justify-content: flex-end; width: 100%;">
+            <div class="header-actions" style="display: flex; align-items: center; gap: 20px;">
+
+            </div>
+        </header>
+
+        <h1 class="page-title">
+            <a href="ai-tools.html" style="color: white; text-decoration: none; margin-right: 15px; transition: 0.2s;"
+                onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            AI Scheduler
+        </h1>
+        <p style="color: rgba(255,255,255,0.8); margin-bottom: 25px;">Describe what you want to achieve today, and let
+            the AI structure an optimized timeline for you.</p>
+
+        <div class="glass-style" style="padding: 40px;">
+            <div class="scheduler-input-container">
+                <textarea id="scheduleInput" class="prompt-textarea"
+                    placeholder="E.g., I have college from 9 AM to 1 PM. I need to study Mathematics for 2 hours, complete a physics assignment, and take a 30 min break for workout. Plan my day till 9 PM."></textarea>
+
+                <button id="generateBtn" class="card-btn" style="padding: 12px 30px;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Schedule
+                </button>
+            </div>
+
+            <div id="loadingIndicator" class="loading-spinner">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 32px; margin-bottom: 15px;"></i>
+                <p>Analyzing your requirements and building your optimal schedule...</p>
+            </div>
+
+            <div id="scheduleOutput" style="display: none;">
+                <h2 style="font-family: 'DM Serif Display', serif; margin-bottom: 15px;">Your Custom Timetable</h2>
+                <div class="schedule-table-wrapper glass-style">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%; padding-left: 20px;">Time Block</th>
+                                <th style="width: 30%;">Task</th>
+                                <th style="width: 45%;">Focus Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div
+                    style="margin-top: 25px; display: flex; justify-content: flex-end; align-items: center; gap: 15px;">
+                    <span style="font-size: 14px; opacity: 0.8; font-weight: 600;">Date to save:</span>
+                    <input type="date" id="saveDate" class="date-picker-styled">
+                    <button id="saveToCalendarBtn" class="card-btn"
+                        style="background: white; color: black; padding: 10px 25px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-calendar-plus"></i> Add to Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard-script.js"></script>
+    <script src="ai-script.js"></script>
+
+    <script>
+        // Store the AI generated array globally so we can push it later
+        let latestGeneratedSchedule = [];
+
+        // Set Datepicker to Today by default
+        const today = new Date();
+        const m = today.getMonth() + 1;
+        const d = today.getDate();
+        document.getElementById('saveDate').value = `${today.getFullYear()}-${m < 10 ? '0' + m : m}-${d < 10 ? '0' + d : d}`;
+
+        document.getElementById('generateBtn').addEventListener('click', async () => {
+            const input = document.getElementById('scheduleInput').value.trim();
+            if (!input) {
+                alert("Please describe what you want to schedule!");
+                return;
+            }
+
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('scheduleOutput').style.display = 'none';
+
+            try {
+                const response = await fetch('/api/generate-schedule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: input })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    // Save for the "Push to Calendar" function
+                    latestGeneratedSchedule = data.schedule;
+
+                    const tbody = document.getElementById('scheduleTableBody');
+                    tbody.innerHTML = '';
+
+                    data.schedule.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="padding-left: 20px; font-weight: 700; color: #fff;">${item.time || 'N/A'}</td>
+                            <td style="font-weight: 800; color: #C5A668;">${item.task || 'N/A'}</td>
+                            <td style="color: rgba(255,255,255,0.8);">${item.description || 'N/A'}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    document.getElementById('scheduleOutput').style.display = 'block';
+                } else {
+                    alert("Error: " + data.detail);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("Failed to connect to the server.");
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }
+        });
+
+        // Push to Dashboard Calendar
+        document.getElementById('saveToCalendarBtn').addEventListener('click', async () => {
+            const userString = localStorage.getItem("user");
+            if (!userString) { alert("Please log in first!"); window.location.href = "login.html"; return; }
+
+            const user = JSON.parse(userString);
+            const userId = user.id || user.user_id;
+            const targetDate = document.getElementById('saveDate').value;
+            const btn = document.getElementById('saveToCalendarBtn');
+
+            if (!targetDate) { alert("Please select a date."); return; }
+            if (latestGeneratedSchedule.length === 0) { alert("No schedule to save."); return; }
+
+            try {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+                btn.disabled = true;
+
+                const getRes = await fetch(`http://localhost:8000/api/get-schedule/${userId}`);
+                const getData = await getRes.json();
+                let allSchedules = getData.schedule || {};
+
+                let dayTasks = allSchedules[targetDate] || [];
+
+                const newTasks = latestGeneratedSchedule.map(item => ({
+                    name: item.task,
+                    timeString: item.time
+                }));
+
+                allSchedules[targetDate] = [...dayTasks, ...newTasks];
+
+                const postRes = await fetch('http://localhost:8000/api/update-schedule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, schedule: allSchedules })
+                });
+
+                const postData = await postRes.json();
+
+                if (postData.status === 'success') {
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Added to Dashboard!';
+                    btn.style.background = "#2ed573";
+                    btn.style.color = "#fff";
+                    btn.style.borderColor = "#2ed573";
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1200);
+                }
+            } catch (error) {
+                console.error('Error saving schedule:', error);
+                alert("Failed to save to calendar.");
+                btn.innerHTML = '<i class="fa-solid fa-calendar-plus"></i> Add to Dashboard';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

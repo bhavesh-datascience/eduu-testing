@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edunovaq - AI Chart Maker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'dark',
+            securityLevel: 'loose',
+            fontFamily: 'Nunito'
+        });
+        window.mermaid = mermaid;
+    </script>
+    <style>
+        .chart-main-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Category Selector Chips */
+        .category-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .category-chip {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .category-chip:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .category-chip.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Input Area */
+        .chart-input-pill {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 8px 10px 8px 25px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 16px;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .draw-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 35px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .draw-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Chart Viewport */
+        #chart-viewport {
+            min-height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            overflow: auto;
+        }
+
+        .code-snippet {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            color: #a5d6ff;
+            font-size: 13px;
+            margin-top: 20px;
+            display: none;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" id="logout-link">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+        <header class="top-header">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="ai-tools.html" style="color: white; text-decoration: none; font-size: 24px; opacity: 0.8;"
+                    title="Back"><i class="fa-solid fa-arrow-left"></i></a>
+                <h1 class="page-title" style="margin: 0;">AI Chart Maker</h1>
+            </div>
+
+            <div class="header-actions">
+
+            </div>
+        </header>
+
+        <div class="chart-main-container">
+            <div class="category-container">
+                <div class="category-chip active" data-type="flowchart"><i class="fa-solid fa-sitemap"></i> Flowchart
+                </div>
+                <div class="category-chip" data-type="pie chart"><i class="fa-solid fa-chart-pie"></i> Pie Chart</div>
+                <div class="category-chip" data-type="mindmap"><i class="fa-solid fa-brain"></i> Mindmap</div>
+                <div class="category-chip" data-type="roadmap"><i class="fa-solid fa-timeline"></i> Roadmap</div>
+                <div class="category-chip" data-type="timeline"><i class="fa-solid fa-clock-rotate-left"></i> Timeline
+                </div>
+                <div class="category-chip" data-type="sequence"><i class="fa-solid fa-arrows-left-right"></i> Sequence
+                </div>
+                <div class="category-chip" data-type="graph"><i class="fa-solid fa-chart-line"></i> Graph</div>
+            </div>
+
+            <div class="chart-input-pill glass-style">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color: rgba(255,255,255,0.5);"></i>
+                <input type="text" id="chart-prompt" class="chart-input"
+                    placeholder="e.g. A roadmap for learning Data Science in 6 months">
+                <button id="draw-btn" class="draw-btn">Generate</button>
+            </div>
+
+            <div class="glass-style" style="padding: 25px; border-radius: 25px;">
+                <div id="chart-viewport">
+                    <div style="text-align: center; opacity: 0.4;">
+                        <i class="fa-solid fa-diagram-project" style="font-size: 50px; margin-bottom: 15px;"></i>
+                        <p>Select a category and describe your chart.</p>
+                    </div>
+                </div>
+                <div id="mermaid-raw-code" class="code-snippet"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard-script.js"></script>
+    <script>
+        let selectedCategory = "flowchart";
+        const drawBtn = document.getElementById('draw-btn');
+        const promptInput = document.getElementById('chart-prompt');
+        const viewport = document.getElementById('chart-viewport');
+        const codeDisplay = document.getElementById('mermaid-raw-code');
+
+        // Chip selection logic
+        document.querySelectorAll('.category-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelector('.category-chip.active').classList.remove('active');
+                chip.classList.add('active');
+                selectedCategory = chip.getAttribute('data-type');
+            });
+        });
+
+        drawBtn.addEventListener('click', async () => {
+            const prompt = promptInput.value.trim();
+            if (!prompt) return;
+
+            drawBtn.disabled = true;
+            drawBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Rendering...';
+            viewport.innerHTML = '<i class="fa-solid fa-spinner fa-spin fa-3x" style="color: white; opacity: 0.5;"></i>';
+            codeDisplay.style.display = 'none';
+
+            try {
+                const response = await fetch('http://localhost:8000/api/generate-chart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        category: selectedCategory
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    codeDisplay.textContent = data.mermaid_code;
+                    codeDisplay.style.display = 'block';
+                    viewport.innerHTML = `<div class="mermaid">${data.mermaid_code}</div>`;
+                    await window.mermaid.run();
+                } else {
+                    viewport.innerHTML = `<p style="color: #ff4757;">⚠️ ${data.detail}</p>`;
+                }
+            } catch (e) {
+                viewport.innerHTML = `<p style="color: #ff4757;">⚠️ Server connection failed.</p>`;
+            } finally {
+                drawBtn.disabled = false;
+                drawBtn.innerHTML = 'Generate';
+            }
+        });
+    </script>
+</body>
+
+</html>

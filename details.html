@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdunovaQ - Student Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+</head>
+
+<body>
+
+    <div class="auth-container-scroll">
+        <div class="card glass-style auth-card details-card">
+
+            <div class="auth-header">
+                <div class="icon-wrapper"
+                    style="margin: 0 auto 20px auto; width: 60px; height: 60px; font-size: 24px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h2>Complete Your Profile</h2>
+                <p>Help us personalize your learning experience.</p>
+            </div>
+
+            <form id="details-form">
+                <div class="form-grid">
+
+                    <h3 class="section-title">Personal Details</h3>
+
+                    <div style="text-align: left;">
+                        <label>Full Name</label>
+                        <input type="text" id="full_name" placeholder="Leslie Alexander" required>
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>Gender</label>
+                        <select id="gender" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="text" id="other_gender" class="hidden" placeholder="Please specify gender"
+                            style="margin-top: 8px;">
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>Date of Birth</label>
+                        <input type="date" id="dob" required>
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>Email Address</label>
+                        <input type="email" id="email" placeholder="name@example.com" required>
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>Mobile Number</label>
+                        <input type="tel" id="mobile" placeholder="+91 XXXXX XXXXX" required>
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>Parent Mobile</label>
+                        <input type="tel" id="parent_mobile" placeholder="+91 XXXXX XXXXX">
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>City</label>
+                        <input type="text" id="city" placeholder="Mumbai" required>
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>State</label>
+                        <input type="text" id="state" placeholder="Maharashtra" required>
+                    </div>
+
+                    <h3 class="section-title">Academic Details</h3>
+
+                    <div class="full-width" style="text-align: left;">
+                        <label>Class / Degree</label>
+                        <select id="class_standard" required>
+                            <option value="" disabled selected>Select your Class / Degree</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="Bachelor's Degree">Bachelor's Degree</option>
+                            <option value="Master's Degree">Master's Degree</option>
+                            <option value="Other Degree">Other Degree</option>
+                        </select>
+                        <input type="text" id="other_class" class="hidden" placeholder="Please specify your degree"
+                            style="margin-top: 8px;">
+                    </div>
+
+                    <div class="full-width hidden" id="course_group" style="text-align: left;">
+                        <label>Course / Major</label>
+                        <select id="course"></select>
+                        <input type="text" id="other_course" class="hidden" placeholder="Please specify your course"
+                            style="margin-top: 8px;">
+                    </div>
+
+                    <div class="full-width hidden" id="board_group" style="text-align: left;">
+                        <label>Board</label>
+                        <select id="board"></select>
+                        <input type="text" id="other_board" class="hidden" placeholder="Please specify your board"
+                            style="margin-top: 8px;">
+                    </div>
+
+                    <div class="hidden" id="stream_group" style="text-align: left;">
+                        <label>Stream</label>
+                        <select id="stream">
+                            <option value="" disabled selected>Select Stream</option>
+                            <option value="Science (PCM)">Science (PCM)</option>
+                            <option value="Science (PCB)">Science (PCB)</option>
+                            <option value="Commerce">Commerce</option>
+                            <option value="Arts">Arts</option>
+                        </select>
+                    </div>
+
+                    <div class="hidden" id="subjects_group" style="text-align: left;">
+                        <label>Subjects</label>
+                        <div id="subjects_container" class="checkbox-container"></div>
+                    </div>
+
+                    <h3 class="section-title">Learning Preferences</h3>
+
+                    <div style="text-align: left;">
+                        <label>Exam Preparation</label>
+                        <div id="exam_prep_container" class="checkbox-container">
+                            <label class="checkbox-item"><input type="checkbox" value="JEE"> JEE</label>
+                            <label class="checkbox-item"><input type="checkbox" value="NEET"> NEET</label>
+                            <label class="checkbox-item"><input type="checkbox" value="CA Foundation"> CA
+                                Foundation</label>
+                            <label class="checkbox-item"><input type="checkbox" value="CUET"> CUET</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Board Exams"> Board Exams</label>
+                            <label class="checkbox-item"><input type="checkbox" value="Olympiads"> Olympiads</label>
+                            <label class="checkbox-item"><input type="checkbox" id="exam_prep_other_checkbox"
+                                    value="Other"> Other</label>
+                        </div>
+                        <input type="text" id="other_exam_prep" class="hidden" placeholder="Please specify exam"
+                            style="margin-top: 8px;">
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>Preferred Language</label>
+                        <select id="language" required>
+                            <option value="English">English</option>
+                            <option value="Hindi">Hindi</option>
+                        </select>
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>Weak Subjects</label>
+                        <input type="text" id="weak_subjects" placeholder="e.g. Math, Physics">
+                    </div>
+
+                    <div style="text-align: left;">
+                        <label>Strong Subjects</label>
+                        <input type="text" id="strong_subjects" placeholder="e.g. English, Biology">
+                    </div>
+
+                </div>
+
+                <div id="form-errors"
+                    style="color: #ff4757; font-size: 14px; font-weight: 700; text-align: center; margin-top: 20px;">
+                </div>
+
+                <button type="submit" class="hero-btn" style="width: 100%; border: none; margin-top: 25px;">Save & Enter
+                    Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const classSelect = document.getElementById('class_standard');
+        const boardGroup = document.getElementById('board_group');
+        const boardSelect = document.getElementById('board');
+        const streamGroup = document.getElementById('stream_group');
+        const streamSelect = document.getElementById('stream');
+        const subjectsGroup = document.getElementById('subjects_group');
+        const subjectsContainer = document.getElementById('subjects_container');
+
+        const courseGroup = document.getElementById('course_group');
+        const courseSelect = document.getElementById('course');
+
+        // Data Arrays
+        const boards9_10 = ["CBSE", "ICSE", "SSC (State Board)", "Other"];
+        const boards11_12 = ["CBSE", "ICSE", "State Board", "NIOS", "Other"];
+
+        const bachelorsCourses = ["B.Tech / B.E.", "B.Sc", "B.A.", "B.Com", "BBA", "MBBS / BDS", "BCA", "LLB", "Other"];
+        const mastersCourses = ["M.Tech / M.E.", "M.Sc", "M.A.", "M.Com", "MBA", "MD / MS", "MCA", "LLM", "Other"];
+        const otherCourses = ["Diploma", "PhD", "Certification", "Post Graduate Diploma", "Other"];
+
+        const subjectsMap = {
+            "Science (PCM)": ["Physics", "Chemistry", "Mathematics", "Computer Science"],
+            "Science (PCB)": ["Physics", "Chemistry", "Biology", "Computer Science"],
+            "Commerce": ["Accountancy", "Business Studies", "Economics", "Mathematics", "Informatics Practices", "Entrepreneurship"],
+            "Arts": ["History", "Geography", "Political Science", "Sociology", "Psychology", "Economics"]
+        };
+
+        // --- DYNAMIC "OTHER" FIELDS LOGIC FOR DROPDOWNS ---
+        function attachOtherListener(selectId, otherInputId, triggerValues) {
+            document.getElementById(selectId).addEventListener('change', function () {
+                const otherInput = document.getElementById(otherInputId);
+                if (triggerValues.includes(this.value)) {
+                    otherInput.classList.remove('hidden');
+                    otherInput.required = true;
+                } else {
+                    otherInput.classList.add('hidden');
+                    otherInput.required = false;
+                    otherInput.value = ''; // clear it when hidden
+                }
+            });
+        }
+
+        // Attach listeners to Dropdowns
+        attachOtherListener('gender', 'other_gender', ['Other']);
+        attachOtherListener('class_standard', 'other_class', ['Other Degree']);
+        attachOtherListener('course', 'other_course', ['Other']);
+        attachOtherListener('board', 'other_board', ['Other']);
+
+        // --- NEW: DYNAMIC "OTHER" FIELD LOGIC FOR EXAM CHECKBOX ---
+        document.getElementById('exam_prep_other_checkbox').addEventListener('change', function () {
+            const otherInput = document.getElementById('other_exam_prep');
+            if (this.checked) {
+                otherInput.classList.remove('hidden');
+                otherInput.required = true;
+            } else {
+                otherInput.classList.add('hidden');
+                otherInput.required = false;
+                otherInput.value = ''; // clear it
+            }
+        });
+
+        // Helper to grab the final value (either the dropdown, or the typed text)
+        function getFinalTextValue(selectId, otherInputId, triggerValues) {
+            const selectEl = document.getElementById(selectId);
+            if (!selectEl.value) return null;
+
+            if (triggerValues.includes(selectEl.value)) {
+                return document.getElementById(otherInputId).value;
+            }
+            return selectEl.value;
+        }
+
+        // Class/Degree Change Logic
+        classSelect.addEventListener('change', function () {
+            const val = this.value;
+            const numVal = parseInt(val);
+
+            // Hide & Reset everything first
+            boardGroup.classList.add('hidden');
+            streamGroup.classList.add('hidden');
+            subjectsGroup.classList.add('hidden');
+            courseGroup.classList.add('hidden');
+
+            boardSelect.innerHTML = '';
+            streamSelect.value = '';
+            courseSelect.innerHTML = '';
+            subjectsContainer.innerHTML = '';
+
+            // Reset "Other" dynamic fields
+            document.getElementById('other_course').classList.add('hidden');
+            document.getElementById('other_board').classList.add('hidden');
+            document.getElementById('other_course').value = '';
+            document.getElementById('other_board').value = '';
+
+            boardGroup.classList.remove('full-width');
+
+            if (!isNaN(numVal)) {
+                // School Student (1-12)
+                if (numVal >= 9 && numVal <= 10) {
+                    boardGroup.classList.remove('hidden');
+                    boardGroup.classList.add('full-width');
+                    populateDropdown(boardSelect, boards9_10);
+                } else if (numVal >= 11 && numVal <= 12) {
+                    boardGroup.classList.remove('hidden');
+                    populateDropdown(boardSelect, boards11_12);
+                    streamGroup.classList.remove('hidden');
+                }
+            } else {
+                // College/Higher Ed Student
+                courseGroup.classList.remove('hidden');
+                if (val === "Bachelor's Degree") {
+                    populateDropdown(courseSelect, bachelorsCourses);
+                } else if (val === "Master's Degree") {
+                    populateDropdown(courseSelect, mastersCourses);
+                } else if (val === "Other Degree") {
+                    populateDropdown(courseSelect, otherCourses);
+                }
+            }
+        });
+
+        // Stream Change Logic -> Populates Checkboxes
+        streamSelect.addEventListener('change', function () {
+            subjectsGroup.classList.remove('hidden');
+            populateCheckboxes(subjectsContainer, subjectsMap[this.value]);
+        });
+
+        // Helper: Populate Dropdowns
+        function populateDropdown(selectElement, optionsArray) {
+            selectElement.innerHTML = '<option value="" disabled selected>Select an option</option>';
+            optionsArray.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                selectElement.appendChild(option);
+            });
+        }
+
+        // Helper: Populate Checkboxes
+        function populateCheckboxes(containerElement, optionsArray) {
+            containerElement.innerHTML = '';
+            optionsArray.forEach(opt => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = opt;
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(' ' + opt));
+
+                containerElement.appendChild(label);
+            });
+        }
+
+        // Helper: Get Checked Values
+        function getCheckedValues(containerId) {
+            const container = document.getElementById(containerId);
+            const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        // Form Submit
+        document.getElementById('details-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            btn.textContent = "Saving...";
+            btn.disabled = true;
+
+            // Extract Exam Prep Array and swap 'Other' with the custom text
+            let examPrepValues = getCheckedValues('exam_prep_container');
+            if (examPrepValues.includes('Other')) {
+                // Remove the word 'Other'
+                examPrepValues = examPrepValues.filter(val => val !== 'Other');
+                // Push whatever they typed into the text field
+                const customExam = document.getElementById('other_exam_prep').value.trim();
+                if (customExam) {
+                    examPrepValues.push(customExam);
+                }
+            }
+
+            const payload = {
+                personal_details: {
+                    full_name: document.getElementById('full_name').value,
+                    gender: getFinalTextValue('gender', 'other_gender', ['Other']),
+                    date_of_birth: document.getElementById('dob').value,
+                    email: document.getElementById('email').value,
+                    mobile_number: document.getElementById('mobile').value,
+                    parent_mobile_number: document.getElementById('parent_mobile').value,
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value
+                },
+                academic_details: {
+                    class_standard: getFinalTextValue('class_standard', 'other_class', ['Other Degree']),
+                    board: boardGroup.classList.contains('hidden') ? null : getFinalTextValue('board', 'other_board', ['Other']),
+                    stream: streamGroup.classList.contains('hidden') ? null : document.getElementById('stream').value,
+                    course: courseGroup.classList.contains('hidden') ? null : getFinalTextValue('course', 'other_course', ['Other']),
+                    subjects: subjectsGroup.classList.contains('hidden') ? [] : getCheckedValues('subjects_container')
+                },
+                learning_preferences: {
+                    // Injecting our modified array here
+                    exam_preparation_for: examPrepValues,
+                    preferred_language: document.getElementById('language').value,
+                    weak_subjects: document.getElementById('weak_subjects').value.split(',').map(s => s.trim()).filter(s => s),
+                    strong_subjects: document.getElementById('strong_subjects').value.split(',').map(s => s.trim()).filter(s => s)
+                }
+            };
+
+            fetch('/api/save-details', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+                .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                .then(res => {
+                    if (res.status === 200) {
+                        window.location.href = "dashboard.html";
+                    } else {
+                        document.getElementById('form-errors').textContent = res.body.detail || "Failed to save details.";
+                        btn.textContent = 'Save & Enter Dashboard';
+                        btn.disabled = false;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('form-errors').textContent = "Server connection failed.";
+                    btn.textContent = 'Save & Enter Dashboard';
+                    btn.disabled = false;
+                });
+        });
+
+        // Pre-fill email and name if available in localStorage
+        window.onload = function () {
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    if (user.email) {
+                        document.getElementById('email').value = user.email;
+                        document.getElementById('email').readOnly = true;
+                        document.getElementById('email').style.opacity = '0.7';
+                    }
+                    if (user.full_name) {
+                        document.getElementById('full_name').value = user.full_name;
+                    }
+                } catch (e) { }
+            }
+        };
+    </script>
+</body>
+
+<<<<<<< HEAD
+</html>
+=======
+</html>
+>>>>>>> c1fcc44dca99038ba27c1dea69e21d4bb2713778

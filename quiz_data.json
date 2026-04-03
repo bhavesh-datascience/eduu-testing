@@ -1,0 +1,119 @@
+{
+    "Std_10": {
+        "Mathematics": [
+            {
+                "id": 1,
+                "q": "Formula for nth term of an AP?",
+                "options": [
+                    "a+(n-1)d",
+                    "a+nd",
+                    "2a+(n-1)d",
+                    "n/2"
+                ],
+                "answer": 0
+            }
+        ],
+        "Science": [
+            {
+                "id": 1,
+                "q": "SI unit of Power?",
+                "options": [
+                    "Joule",
+                    "Watt",
+                    "Newton",
+                    "Pascal"
+                ],
+                "answer": 1
+            }
+        ]
+    },
+    "Std_12": {
+        "Physics": [
+            {
+                "id": 1,
+                "q": "What is the SI unit of Magnetic Flux?",
+                "options": [
+                    "Tesla",
+                    "Weber",
+                    "Henry",
+                    "Farad"
+                ],
+                "answer": 1
+            },
+            {
+                "id": 2,
+                "q": "In a p-n junction, the depletion layer is caused by:",
+                "options": [
+                    "Drift",
+                    "Diffusion",
+                    "Ionisation",
+                    "Heating"
+                ],
+                "answer": 1
+            }
+        ],
+        "Chemistry": [
+            {
+                "id": 1,
+                "q": "Which of the following is a crystalline solid?",
+                "options": [
+                    "Glass",
+                    "Rubber",
+                    "Plastic",
+                    "Table Salt"
+                ],
+                "answer": 3
+            },
+            {
+                "id": 2,
+                "q": "The rate of a zero-order reaction is independent of:",
+                "options": [
+                    "Temperature",
+                    "Concentration",
+                    "Time",
+                    "Catalyst"
+                ],
+                "answer": 1
+            }
+        ],
+        "Mathematics": [
+            {
+                "id": 1,
+                "q": "Integration of sec²x dx is:",
+                "options": [
+                    "tan x + C",
+                    "sec x + C",
+                    "log(sec x) + C",
+                    "cot x + C"
+                ],
+                "answer": 0
+            }
+        ],
+        "Biology": [
+            {
+                "id": 1,
+                "q": "The functional unit of inheritance is:",
+                "options": [
+                    "DNA",
+                    "Gene",
+                    "Chromosome",
+                    "Nucleus"
+                ],
+                "answer": 1
+            }
+        ],
+        "English": [
+            {
+                "id": 1,
+                "q": "Who wrote the poem 'Keeping Quiet'?",
+                "options": [
+                    "Robert Frost",
+                    "Pablo Neruda",
+                    "John Keats",
+                    "Kamala Das"
+                ],
+                "answer": 1
+            }
+        ]
+    }
+}

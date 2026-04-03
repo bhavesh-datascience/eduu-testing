@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edunovaq - YouTube Summarizer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+
+    <style>
+        /* General Layout */
+        .yt-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+
+        /* Input Area (using glass-style visually) */
+        .yt-input-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 15px 10px 25px;
+            border-radius: 50px;
+            margin-top: 10px;
+        }
+
+        .yt-input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 16px;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .yt-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .summarize-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .summarize-btn:hover {
+            transform: scale(1.05);
+            background: #f0f0f0;
+        }
+
+        /* Chat UI matching chat.html perfectly */
+        .chat-history {
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+
+        .chat-history::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-history::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-history::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 15px 25px;
+            line-height: 1.6;
+            font-size: 15px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* User Message: Solid Gold */
+        .msg-user {
+            align-self: flex-end;
+            background: #C5A668;
+            border: none;
+            border-radius: 20px 20px 5px 20px;
+            color: #fff;
+        }
+
+        /* AI Message: Frosted Glass */
+        .msg-ai {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px 20px 20px 5px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Chat Controls inside the card */
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 8px 15px;
+            border-radius: 50px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 15px;
+        }
+
+        .chat-action-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            padding: 10px;
+        }
+
+        .chat-action-btn:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .tts-btn {
+            margin-left: 10px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .tts-btn:hover {
+            opacity: 1;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" id="logout-link">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+
+        <header class="top-header" style="margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="ai-tools.html"
+                    style="color: white; text-decoration: none; font-size: 24px; opacity: 0.8; transition: 0.3s;"
+                    title="Back"><i class="fa-solid fa-arrow-left"></i></a>
+                <h1 class="page-title" style="margin: 0;">YouTube Summarizer</h1>
+            </div>
+
+            <div class="header-actions">
+
+        </header>
+
+        <div class="yt-container">
+            <div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
+                <i class="fa-brands fa-youtube" style="font-size: 40px; color: #ff0000; margin-bottom: 10px;"></i>
+                <p style="color: rgba(255,255,255,0.6); margin-top: 5px; font-size: 15px;">Paste the URL of any
+                    educational YouTube video with subtitles.</p>
+            </div>
+
+            <div class="yt-input-box glass-style">
+                <i class="fa-solid fa-link" style="color: rgba(255,255,255,0.5);"></i>
+                <input type="text" id="yt-url" class="yt-input" placeholder="https://youtu.be/...">
+                <button id="summarize-btn" class="summarize-btn">Summarize</button>
+            </div>
+
+            <div id="status-msg"
+                style="text-align: center; color: #ff4757; display: none; margin-top: 10px; font-weight: bold;"></div>
+
+            <div id="summary-section" class="glass-style"
+                style="display: none; padding: 30px; margin-top: 10px; border-radius: 20px;">
+                <h3
+                    style="color: #fff; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+                    <i class="fa-solid fa-file-lines" style="color: #9D4EDD; margin-right: 8px;"></i> Video Summary
+                </h3>
+                <div id="summary-content" style="color: rgba(255,255,255,0.9); line-height: 1.6;"></div>
+            </div>
+
+            <div id="chat-section" class="glass-style"
+                style="display: none; padding: 30px; margin-top: 10px; border-radius: 20px;">
+                <h3
+                    style="color: #fff; margin-top: 0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px;">
+                    <i class="fa-solid fa-comments" style="color: #4CAF50; margin-right: 8px;"></i> Ask questions about
+                    this video
+                </h3>
+
+                <div class="chat-history" id="chat-history">
+                </div>
+
+                <div class="chat-input-area">
+                    <button id="mic-btn" class="chat-action-btn" title="Speak"><i
+                            class="fa-solid fa-microphone"></i></button>
+                    <button id="play-btn" class="chat-action-btn" title="Play Audio"><i
+                            class="fa-solid fa-play"></i></button>
+                    <button id="pause-btn" class="chat-action-btn" title="Pause Audio"><i
+                            class="fa-solid fa-pause"></i></button>
+
+                    <input type="text" id="chat-input" class="yt-input" placeholder="What else would you like to know?">
+
+                    <button id="send-btn" class="chat-action-btn" style="color: #fff;" title="Send"><i
+                            class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard-script.js"></script>
+    <script src="youtube-script.js"></script>
+</body>
+
+</html>

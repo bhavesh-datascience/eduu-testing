@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edunovaq - Active Study Room</title>
+    <script src="https://8x8.vc/vpaas-magic-cookie-0173a0b920f94c92ba407b9fd59fc259/external_api.js"></script>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; }
+        #jitsi-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; }
+        .controls-overlay { position: absolute; bottom: 25px; left: 25px; z-index: 100000; display: flex; gap: 15px; }
+        .overlay-btn { padding: 12px 20px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; font-family: sans-serif; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .overlay-btn:hover { background: rgba(255, 255, 255, 0.15); }
+        #copy-btn { background: rgba(59, 130, 246, 0.6); }
+        #copy-btn:hover { background: rgba(59, 130, 246, 0.8); }
+    </style>
+</head>
+<body>
+    <div id="jitsi-container"></div>
+    
+    <div class="controls-overlay">
+        <button id="copy-btn" class="overlay-btn" onclick="copyInviteCode()">📋 Copy Invite Code</button>
+        <button id="fullscreen-btn" class="overlay-btn" onclick="toggleFullScreen()">⛶ Enter Fullscreen</button>
+    </div>
+
+    <script>
+        let api = null;
+
+        window.onload = async () => {
+            const baseRoomName = localStorage.getItem("currentStudyRoom");
+            let userName = localStorage.getItem("studyRoomUser");
+            const isPublicRoom = localStorage.getItem("isPublicRoom") === "true";
+
+            if (!baseRoomName) {
+                window.location.href = "group-study.html";
+                return;
+            }
+
+            if (!userName || userName === "Loading..." || userName === "U") {
+                userName = "Edunovaq Student"; 
+            }
+
+            // CRITICAL FIX: Match Kotlin's safeRoomName logic to prevent server crashes
+            // Replaces all hyphens and spaces
+            const safeRoomName = baseRoomName.replace(/-/g, "").replace(/\s+/g, "");
+
+            let dynamicJwt = "";
+            try {
+                // CHANGED: Removed http://127.0.0.1:8000 to use a relative path
+                const response = await fetch(`/api/get-meet-token?username=${encodeURIComponent(userName)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    dynamicJwt = data.token;
+                } else {
+                    console.error("Failed to generate token:", data.error);
+                    alert("Could not connect to secure meeting server.");
+                    return;
+                }
+            } catch (error) {
+                console.error("Error fetching JWT:", error);
+                alert("Server error while joining the room. Make sure your Python server is running!");
+                return;
+            }
+
+            const domain = "8x8.vc";
+            const fullRoomName = `vpaas-magic-cookie-0173a0b920f94c92ba407b9fd59fc259/${safeRoomName}`;
+
+            const options = {
+                roomName: fullRoomName,
+                width: "100%",
+                height: "100%",
+                parentNode: document.getElementById("jitsi-container"),
+                jwt: dynamicJwt,
+                userInfo: { displayName: userName },
+                configOverwrite: {
+                    prejoinPageEnabled: false, 
+                    disableDeepLinking: true,
+                    securityOptionsEnabled: false, 
+                    startWithAudioMuted: isPublicRoom, 
+                    startWithVideoMuted: false
+                },
+                interfaceConfigOverwrite: {
+                    SHOW_JITSI_WATERMARK: false,
+                    SHOW_WATERMARK_FOR_GUESTS: false,
+                    SHOW_BRAND_WATERMARK: false,
+                    DEFAULT_LOGO_URL: '',
+                    HIDE_INVITE_MORE_HEADER: true, 
+                    SHOW_PROMOTIONAL_CLOSE_PAGE: false,
+                    TOOLBAR_BUTTONS: [
+                        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+                        'fodeviceselection', 'hangup', 'chat', 'raisehand', 'videoquality', 'tileview'
+                    ]
+                }
+            };
+
+            api = new JitsiMeetExternalAPI(domain, options);
+
+            api.addEventListener('videoConferenceLeft', () => leaveRoom());
+            api.addEventListener('readyToClose', () => leaveRoom());
+        };
+
+        function leaveRoom() {
+            if (api) api.dispose(); 
+            if (document.fullscreenElement) document.exitFullscreen().catch(err => console.log(err));
+            
+            localStorage.removeItem("currentStudyRoom");
+            localStorage.removeItem("studyRoomUser");
+            localStorage.removeItem("isPublicRoom"); 
+            localStorage.removeItem("inviteCode"); 
+            window.location.href = "group-study.html";
+        }
+
+        // --- CLIPBOARD LOGIC ---
+        function copyInviteCode() {
+            // Copies ONLY the short code (e.g., abc-def) instead of the whole string
+            const inviteCode = localStorage.getItem("inviteCode");
+            
+            if (!inviteCode) return;
+
+            const btn = document.getElementById("copy-btn");
+            const originalText = btn.innerText;
+
+            const successFeedback = () => {
+                btn.innerText = "✅ Copied!";
+                setTimeout(() => { btn.innerText = originalText; }, 3000);
+            };
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(inviteCode).then(successFeedback).catch(fallbackCopyTextToClipboard);
+            } else {
+                fallbackCopyTextToClipboard(inviteCode, successFeedback);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text, onSuccess) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.top = "-99999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful && onSuccess) onSuccess();
+                else prompt("Press Ctrl+C to copy your invite code:", text);
+            } catch (err) {
+                prompt("Press Ctrl+C to copy your invite code:", text);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // --- FULLSCREEN LOGIC ---
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Your browser blocked full-screen: ${err.message}`);
+                });
+                document.getElementById('fullscreen-btn').innerText = "🗗 Exit Fullscreen";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    document.getElementById('fullscreen-btn').innerText = "⛶ Enter Fullscreen";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

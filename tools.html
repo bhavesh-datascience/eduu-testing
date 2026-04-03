@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edunovaq - Tools</title>
+    <link rel="icon" type="image/webp" href="1.webp">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+</head>
+
+<body>
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="logout()">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+        <header class="top-header" style="justify-content: flex-end; width: 100%;">
+            <div class="header-actions" style="display: flex; align-items: center; gap: 20px;">
+                <i class="fa-regular fa-bell" style="font-size: 20px; cursor: pointer;"></i>
+
+                <div class="user-profile glass-style">
+                    <div id="profile-img-placeholder"
+                        style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; border: 1px solid rgba(255,255,255,0.4);">
+                        U
+                    </div>
+                    <span id="profile-name-display">Loading...</span>
+                </div>
+
+                <i class="fa-solid fa-arrow-right-from-bracket" id="logout-icon"
+                    style="font-size: 20px; cursor: pointer; color: rgba(255,255,255,0.7);" title="Logout"></i>
+            </div>
+        </header>
+
+        <h1 class="page-title">Resources & Games</h1>
+
+        <div class="tools-grid">
+            <div class="tool-option-card glass-style" onclick="window.location.href='/quizdashboardpage'">
+                <div class="icon-wrapper"><i class="fa-solid fa-trophy"></i></div>
+                <h2>Gamification</h2>
+                <p>Earn badges and compete in 10th Std Quizzes.</p>
+                <button class="card-btn"
+                    onclick="event.stopPropagation(); window.location.href='/quizdashboardpage'">Play Now</button>
+            </div>
+
+            <div class="tool-option-card glass-style">
+                <div class="icon-wrapper"><i class="fa-solid fa-file-invoice"></i></div>
+                <h2>Past Papers</h2>
+                <p>Browse exam archives.</p>
+                <button class="card-btn">View Papers</button>
+            </div>
+        </div>
+    </main>
+    <script src="dashboard-script.js"></script>
+</body>
+
+</html>

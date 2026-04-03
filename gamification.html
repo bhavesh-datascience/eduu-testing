@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edunovaq - Gamification</title>
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="sidebar glass-style">
+        <div class="brand">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span class="brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li><a href="/" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li><a href="/gamificationpage" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-gamepad"></i></div><span
+                        class="nav-text">Gamification</span>
+                </a></li>
+        </ul>
+        <div class="bottom-menu">
+            <ul class="nav-list">
+                <li><a href="/loginpage" class="nav-link">
+                        <div class="icon-container"><i class="fa-solid fa-arrow-right-from-bracket"></i></div><span
+                            class="nav-text">Logout</span>
+                    </a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-container">
+
+        <div id="subject-selection-view" class="glass-view active">
+            <div class="top-header" style="justify-content: flex-start; margin-bottom: 20px;">
+                <div class="glass-toggle">
+                    <button class="toggle-btn active">Quiz</button>
+                    <button class="toggle-btn">Flashcards</button>
+                </div>
+            </div>
+
+            <h1 class="page-title" id="std-title">Select Subject for Quiz</h1>
+            <p id="error-message" style="color: #ff9f43; display: none;"></p>
+
+            <div class="glass-grid" id="subjects-container">
+                <p>Loading subjects...</p>
+            </div>
+        </div>
+
+        <div id="active-quiz-view" class="glass-view">
+            <div class="quiz-header">
+                <button class="icon-btn" onclick="showSubjectSelection()"><i
+                        class="fa-solid fa-arrow-left"></i></button>
+                <h2 id="quiz-title" style="margin: 0; padding-left: 15px;">Quiz: Subject</h2>
+            </div>
+
+            <div class="glass-style quiz-play-area">
+                <div class="glass-progress-container">
+                    <div class="glass-progress-bar" id="quiz-progress" style="width: 10%;"></div>
+                </div>
+                <p class="question-meta">Question 1 of 10</p>
+
+                <h3 class="question-text">Loading question...</h3>
+
+                <div class="glass-options">
+                    <button class="glass-option-btn">Option A</button>
+                    <button class="glass-option-btn">Option B</button>
+                    <button class="glass-option-btn">Option C</button>
+                    <button class="glass-option-btn">Option D</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Fetch subjects dynamically on page load
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Get user_id from localStorage (Assuming you save it on login)
+            // Fallback to 1 for testing if localStorage is empty
+            const userString = localStorage.getItem("user");
+            let userId = 1;
+            if (userString) {
+                const user = JSON.parse(userString);
+                userId = user.id;
+            }
+
+            try {
+                const response = await fetch(`/api/gamification-subjects/${userId}`);
+                const data = await response.json();
+
+                const container = document.getElementById("subjects-container");
+                const errorMsg = document.getElementById("error-message");
+                const stdTitle = document.getElementById("std-title");
+
+                if (data.status === "error") {
+                    container.innerHTML = "";
+                    errorMsg.innerText = data.message;
+                    errorMsg.style.display = "block";
+                    return;
+                }
+
+                stdTitle.innerText = `Select Subject for Quiz (Std ${data.standard})`;
+                container.innerHTML = ""; // Clear loading text
+
+                // Render Subject Cards
+                data.subjects.forEach(subject => {
+                    const card = document.createElement("div");
+                    // Using your existing global glass classes for seamless integration
+                    card.className = "glass-style glass-card subject-card";
+                    card.onclick = () => startQuiz(subject.name);
+
+                    card.innerHTML = `
+                        <div class="icon-circle" style="color: ${subject.color}; border-color: ${subject.color}40;">
+                            <i class="fa-solid ${subject.icon}"></i>
+                        </div>
+                        <h3 style="font-size: 18px; font-weight: 700; color: #fff;">${subject.name}</h3>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Error fetching subjects:", error);
+                document.getElementById("subjects-container").innerHTML = "<p>Error loading subjects. Is the server running?</p>";
+            }
+        });
+
+        // View Toggling Logic
+        function startQuiz(subjectName) {
+            document.getElementById('subject-selection-view').classList.remove('active');
+            document.getElementById('active-quiz-view').classList.add('active');
+            document.getElementById('quiz-title').innerText = 'Quiz: ' + subjectName;
+
+            // Dummy Question Update for Demo
+            document.querySelector('.question-text').innerText = `What is a core concept of ${subjectName}?`;
+        }
+
+        function showSubjectSelection() {
+            document.getElementById('active-quiz-view').classList.remove('active');
+            document.getElementById('subject-selection-view').classList.add('active');
+        }
+
+        // Option Selection Highlight
+        const options = document.querySelectorAll('.glass-option-btn');
+        options.forEach(option => {
+            option.addEventListener('click', function () {
+                options.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+
+</html>

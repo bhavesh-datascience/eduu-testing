@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edunovaq - AI Chat</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+
+    <style>
+        .chat-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+            position: relative;
+            padding: 0;
+        }
+
+        .chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chat-history::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-history::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-history::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .chat-message {
+            max-width: 75%;
+            padding: 15px 25px;
+            line-height: 1.6;
+            font-size: 15px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* User Message: Solid Gold */
+        .msg-user {
+            align-self: flex-end;
+            background: #C5A668;
+            border: none;
+            border-radius: 20px 20px 5px 20px;
+            color: #fff;
+        }
+
+        /* AI Message: Frosted Glass */
+        .msg-ai {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px 20px 20px 5px;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Input Area: Dark Pill hugging the bottom */
+        .chat-input-area {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 50px;
+            margin: 10px 30px 30px 30px;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 15px;
+            padding: 5px 10px;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .chat-action-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            padding: 10px;
+        }
+
+        .chat-action-btn:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        /* Send Button */
+        #send-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            padding: 8px 25px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+        }
+
+        #send-btn i {
+            font-size: 14px;
+        }
+
+        #send-btn span {
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        #send-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #fff;
+            transform: scale(1.02);
+        }
+
+        .tts-btn {
+            margin-left: 10px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .tts-btn:hover {
+            opacity: 1;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" id="logout-link">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+        <header class="top-header" style="margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="ai-tools.html"
+                    style="color: white; text-decoration: none; font-size: 24px; opacity: 0.8; transition: 0.3s;"
+                    title="Back"><i class="fa-solid fa-arrow-left"></i></a>
+                <h1 class="page-title" style="margin: 0;">AI Study Assistant</h1>
+            </div>
+
+            <div class="header-actions">
+
+            </div>
+        </header>
+
+        <div class="chat-wrapper glass-style">
+            <div class="chat-history" id="chat-history">
+                <div class="chat-message msg-ai">
+                    Hello! I am your AI Study Assistant. You can type a question, or use the microphone icon to speak to
+                    me.
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <button id="mic-btn" class="chat-action-btn" title="Speak to AI"><i
+                        class="fa-solid fa-microphone"></i></button>
+
+                <button id="play-btn" class="chat-action-btn" title="Resume Audio"><i
+                        class="fa-solid fa-play"></i></button>
+                <button id="pause-btn" class="chat-action-btn" title="Pause Audio"><i
+                        class="fa-solid fa-pause"></i></button>
+                <button id="stop-btn" class="chat-action-btn" title="Stop Audio" style="color: #ff4757;"><i
+                        class="fa-solid fa-stop"></i></button>
+
+                <input type="text" id="chat-input" class="chat-input"
+                    placeholder="Ask a question or explain a topic...">
+
+                <button id="send-btn" class="chat-action-btn" title="Send Message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Send</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard-script.js"></script>
+    <script src="chat-script.js"></script>
+</body>
+
+</html>

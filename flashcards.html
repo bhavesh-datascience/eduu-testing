@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edunovaq - Flash Cards</title>
+    <link rel="icon" type="image/webp" href="1.webp">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <style>
+        .flashcard-container {
+            max-width: 600px;
+            margin: 40px auto;
+            perspective: 1000px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 400px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .flashcard.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        /* Matching the dark blue card style */
+        .card-front {
+            background: #1a1f3c;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-back {
+            background: #1a1f3c;
+            border: 2px solid #C5A668;
+            transform: rotateY(180deg);
+        }
+
+        .explanation {
+            font-size: 16px;
+            margin-top: 20px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .nav-btns {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 35px;
+            width: 100%;
+        }
+
+        /* Global Header Back Button Hover Fix */
+        .global-back-btn {
+            transition: 0.3s;
+            opacity: 0.9;
+        }
+
+        .global-back-btn:hover {
+            opacity: 1;
+            transform: translateX(-3px);
+            color: #C5A668;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="logout()">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+        <header class="top-header" style="justify-content: space-between; width: 100%; align-items: center;">
+            <div class="global-back-btn" style="display: flex; align-items: center; gap: 12px; cursor: pointer;"
+                onclick="window.location.href='/quizdashboardpage'">
+                <i class="fa-solid fa-arrow-left" style="font-size: 22px;"></i>
+                <h1 class="page-title" style="margin-bottom: 0;">Flash Card</h1>
+            </div>
+
+
+            </div>
+        </header>
+
+        <div class="flashcard-container">
+            <div class="flashcard" id="flashcard" onclick="this.classList.toggle('is-flipped')">
+                <div class="card-face card-front glass-style">
+                    <span
+                        style="color: #C5A668; font-weight: 800; margin-bottom: 15px; letter-spacing: 1px;">QUESTION</span>
+                    <h2 id="q-text" style="font-size: 24px; color: #fff;">...</h2>
+                    <p style="margin-top: 40px; font-size: 14px; opacity: 0.5;">Tap to Flip <i
+                            class="fa-solid fa-rotate"></i></p>
+                </div>
+                <div class="card-face card-back glass-style">
+                    <span style="color: #2ecc71; font-weight: 800; margin-bottom: 15px; letter-spacing: 1px;">CORRECT
+                        ANSWER</span>
+                    <h2 id="a-text" style="color: #fff; font-size: 26px;">...</h2>
+                    <div class="explanation" id="exp-text">...</div>
+                </div>
+            </div>
+
+            <div class="nav-btns">
+                <button class="card-btn" onclick="prevCard()"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+                <button class="card-btn" onclick="nextCard()">Next <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard-script.js"></script>
+    <script>
+        let currentData = [];
+        let index = 0;
+
+        async function init() {
+            const subject = localStorage.getItem('selectedQuizSubject') || 'Mathematics';
+            const userId = localStorage.getItem('user_id') || 1;
+
+            try {
+                const res = await fetch(`/api/quiz-data/${userId}/${subject}`);
+                const data = await res.json();
+                if (data.status === "success") {
+                    currentData = data.questions;
+                    render();
+                }
+            } catch (err) {
+                console.error("Failed to load flashcards:", err);
+            }
+        }
+
+        function render() {
+            const card = document.getElementById('flashcard');
+            card.classList.remove('is-flipped');
+
+            setTimeout(() => {
+                const item = currentData[index];
+                document.getElementById('q-text').innerText = item.q;
+                document.getElementById('a-text').innerText = item.options[item.answer];
+                document.getElementById('exp-text').innerText = item.explanation || "Flip to see the detailed explanation.";
+            }, 150);
+        }
+
+        function nextCard() { if (index < currentData.length - 1) { index++; render(); } }
+        function prevCard() { if (index > 0) { index--; render(); } }
+
+        init();
+    </script>
+</body>
+
+</html>

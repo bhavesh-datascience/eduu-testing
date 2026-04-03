@@ -1,0 +1,53 @@
+{
+    "Std_10": {
+        "Mathematics": [
+            {
+                "q": "Pythagoras Theorem",
+                "answer": "a² + b² = c²",
+                "explanation": "In a right-angled triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides."
+            }
+        ]
+    },
+    "Std_12": {
+        "Physics": [
+            {
+                "q": "Coulomb's Law",
+                "answer": "F = k * (q1*q2)/r²",
+                "explanation": "The force between two point charges is directly proportional to the product of the charges and inversely proportional to the square of the distance between them."
+            },
+            {
+                "q": "Photoelectric Effect",
+                "answer": "Ejection of electrons",
+                "explanation": "The emission of electrons when electromagnetic radiation, such as light, hits a material."
+            }
+        ],
+        "Chemistry": [
+            {
+                "q": "Raoult's Law",
+                "answer": "P_solution = X_solvent * P_solvent",
+                "explanation": "The partial vapour pressure of each volatile component in a solution is directly proportional to its mole fraction."
+            }
+        ],
+        "Mathematics": [
+            {
+                "q": "Derivative of e^x",
+                "answer": "e^x",
+                "explanation": "The exponential function e^x is unique because it is its own derivative."
+            }
+        ],
+        "Biology": [
+            {
+                "q": "Double Fertilization",
+                "answer": "Unique to Angiosperms",
+                "explanation": "Involves the joining of a female gametophyte with two male gametes."
+            }
+        ],
+        "English": [
+            {
+                "q": "Theme of 'The Last Lesson'",
+                "answer": "Linguistic Chauvinism",
+                "explanation": "The story emphasizes the importance of one's mother tongue and the pain of losing it to an oppressor."
+            }
+        ]
+    }
+}

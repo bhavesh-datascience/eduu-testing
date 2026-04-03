@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edunovaq - AI Tools</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard-styles.css">
+</head>
+
+<body>
+    <nav class="sidebar glass-style">
+        <div class="brand">
+            <div class="icon-container"><img src="logo.png" alt="Edunovaq Logo"
+                    style="width: 35px; height: 35px; object-fit: contain; border-radius: 50%;"></div>
+            <span class="nav-text brand-text">Edunovaq</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-house"></i></div><span
+                        class="nav-text">Dashboard</span>
+                </a></li>
+            <li class="nav-item"><a href="focus.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-bullseye"></i></div><span
+                        class="nav-text">Focus</span>
+                </a></li>
+            <li class="nav-item"><a href="ai-tools.html" class="nav-link active">
+                    <div class="icon-container"><i class="fa-solid fa-robot"></i></div><span class="nav-text">AI
+                        Tools</span>
+                </a></li>
+            <li class="nav-item"><a href="group-study.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-users"></i></div><span class="nav-text">Group
+                        Study</span>
+                </a></li>
+            <li class="nav-item"><a href="tools.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-toolbox"></i></div><span
+                        class="nav-text">Tools</span>
+                </a></li>
+        </ul>
+        <ul class="nav-list bottom-menu">
+            <li class="nav-item"><a href="settings.html" class="nav-link">
+                    <div class="icon-container"><i class="fa-solid fa-gear"></i></div><span
+                        class="nav-text">Settings</span>
+                </a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="logout()">
+                    <div class="icon-container"><i class="fa-solid fa-right-from-bracket"></i></div><span
+                        class="nav-text">Logout</span>
+                </a></li>
+        </ul>
+    </nav>
+
+    <main class="main-container">
+        <header class="top-header" style="justify-content: flex-end; width: 100%;">
+            <div class="header-actions" style="display: flex; align-items: center; gap: 20px;">
+                <i class="fa-regular fa-bell" style="font-size: 20px; cursor: pointer;"></i>
+
+                <div class="user-profile glass-style">
+                    <div id="profile-img-placeholder"
+                        style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; border: 1px solid rgba(255,255,255,0.4);">
+                        U
+                    </div>
+                    <span id="profile-name-display">Loading...</span>
+                </div>
+
+                <i class="fa-solid fa-arrow-right-from-bracket" id="logout-icon"
+                    style="font-size: 20px; cursor: pointer; color: rgba(255,255,255,0.7);" title="Logout"></i>
+            </div>
+        </header>
+
+        <h1 class="page-title">AI Study Suite</h1>
+
+        <div class="tools-grid">
+            <div class="tool-card glass-style">
+                <div class="icon-wrapper"><i class="fa-solid fa-robot"></i></div>
+                <h2>Study Assistant</h2>
+                <p>Your 24/7 personal tutor.</p>
+                <a href="chat.html">
+                    <button class="card-btn">Launch</button>
+                </a>
+            </div>
+
+            <div class="tool-card glass-style">
+                <div class="icon-wrapper"><i class="fa-solid fa-file-pdf metallic-text"></i></div>
+                <h2 class="metallic-text">Chat to PDF</h2>
+                <p>Upload your syllabus, textbook, or notes and instantly ask questions.</p>
+                <a href="pdf.html" class="card-btn" style="text-decoration: none; display: inline-block;">Upload PDF</a>
+            </div>
+
+            <div class="tool-card glass-style">
+                <div class="icon-wrapper"><i class="fa-brands fa-youtube"></i></div>
+                <h2>Video Summarizer</h2>
+                <p>Get notes from YouTube lectures.</p>
+                <a href="youtube.html" class="card-btn"
+                    style="text-decoration: none; display: inline-block;">Summarize</a>
+            </div>
+
+            <div class="tool-card glass-style"
+                style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                <div class="icon-wrapper"
+                    style="background: rgba(255,255,255,0.1); border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                    <i class="fa-solid fa-diagram-project" style="font-size: 24px; color: #fff;"></i>
+                </div>
+                <h2>AI Chart Maker</h2>
+                <p>Generate flowcharts and diagrams instantly from descriptions.</p>
+                <a href="charts.html" class="card-btn"
+                    style="text-decoration: none; display: inline-block; margin-top: auto;">Launch</a>
+            </div>
+            <div class="tool-card glass-style"
+                style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                <div class="icon-wrapper"
+                    style="background: rgba(255,255,255,0.1); border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                    <i class="fa-solid fa-calendar-day" style="font-size: 24px; color: #fff;"></i>
+                </div>
+                <h2>AI Scheduler</h2>
+                <p>Type your goals for the day and get a structured timetable.</p>
+                <a href="ai-scheduler.html" class="card-btn"
+                    style="text-decoration: none; display: inline-block; margin-top: auto;">Launch</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard-script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+    --bg-main: #F8F5F0;
+    --card-bg: #ffffff;
+    --accent-gold: #C5A668;
+    --accent-dark-gold: #c58300;
+    --text-dark: #333333;
+    --text-muted: #888888;
+    --input-bg: #EBEBEB;
+    --error-red: #ff4757;
+    --success-green: #2ed573;
+    --border-color: #EAE4D6;
+}
+
+/* Dark Mode Overrides for Auth */
+body.dark-mode {
+    --bg-main: #121212;
+    --card-bg: #1E1E1E;
+    --text-dark: #F5F5F5;
+    --text-muted: #AAAAAA;
+    --input-bg: #2C2C2C;
+    --border-color: #333333;
+    --accent-gold: #D4AF37;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Nunito', sans-serif;
+
+    /* Base: deep navy — exact match to reference */
+    background-color: #0b1120;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    transition: background 0.3s, color 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Cyan/blue glow — top-left corner, exactly like reference */
+body::before {
+    content: '';
+    position: fixed;
+    top: -80px;
+    left: -80px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(50, 140, 255, 0.38) 0%, rgba(20, 80, 200, 0.16) 42%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Purple/violet glow — right side, exactly like reference */
+body::after {
+    content: '';
+    position: fixed;
+    top: 15%;
+    right: -80px;
+    width: 400px;
+    height: 520px;
+    background: radial-gradient(circle, rgba(130, 60, 255, 0.36) 0%, rgba(90, 30, 200, 0.15) 42%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.auth-container { width: 100%; max-width: 480px; padding: 20px; position: relative; z-index: 1; }
+
+.auth-card {
+    background: rgba(14, 20, 45, 0.75);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+    border: 1px solid rgba(80, 120, 255, 0.20);
+    text-align: center;
+    color: #fff;
+}
+
+.brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 25px; color: var(--accent-gold); }
+.brand i { font-size: 32px; }
+.brand span { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 700; }
+
+.auth-title { font-family: 'DM Serif Display', serif; font-size: 32px; color: #fff; margin-bottom: 8px; }
+.auth-subtitle { color: rgba(255,255,255,0.6); font-size: 15px; margin-bottom: 35px; line-height: 1.5; }
+
+.auth-form { text-align: left; }
+.form-group { margin-bottom: 20px; position: relative; }
+.form-group label { display: block; margin-bottom: 8px; color: rgba(255,255,255,0.85); font-weight: 700; font-size: 14px; margin-left: 5px; }
+.form-group label i { color: #4fc8ff; margin-right: 5px; }
+
+.form-group input {
+    width: 100%; padding: 14px 18px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(100,140,255,0.25);
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 600; transition: all 0.2s;
+    backdrop-filter: blur(8px);
+}
+.form-group input:focus { outline: none; background: rgba(255,255,255,0.10); border-color: #4fc8ff; box-shadow: 0 0 0 3px rgba(60,140,255,0.18); }
+.form-group input::placeholder { color: rgba(255,255,255,0.35); }
+
+.password-toggle { position: absolute; right: 15px; top: 42px; background: none; border: none; color: rgba(255,255,255,0.5); cursor: pointer; font-size: 14px; }
+.password-toggle:hover { color: #4fc8ff; }
+
+.form-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; font-size: 14px; }
+.remember-me, .terms-checkbox { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-weight: 600; }
+.remember-me input, .terms-checkbox input { accent-color: #4fc8ff; width: 16px; height: 16px; }
+.forgot-password, .terms-checkbox a { color: #4fc8ff; text-decoration: none; font-weight: 700; }
+.forgot-password:hover, .terms-checkbox a:hover { text-decoration: underline; }
+
+.auth-button {
+    width: 100%; padding: 15px;
+    background: linear-gradient(135deg, #1a6fff 0%, #7b2fff 100%);
+    border: none; border-radius: 12px;
+    color: #fff; font-size: 16px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer;
+    transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 4px 20px rgba(30, 100, 255, 0.45);
+}
+.auth-button:hover { background: linear-gradient(135deg, #0f5edd 0%, #6a1fff 100%); transform: translateY(-2px); box-shadow: 0 6px 28px rgba(30,100,255,0.6); }
+
+.auth-divider { display: flex; align-items: center; margin: 30px 0 20px; color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 600; }
+.auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: rgba(255,255,255,0.12); }
+.auth-divider span { padding: 0 15px; }
+
+.social-login { display: flex; gap: 15px; margin-bottom: 30px; }
+.social-button {
+    flex: 1; padding: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(100,140,255,0.22);
+    border-radius: 12px;
+    color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    backdrop-filter: blur(8px);
+}
+.social-button:hover { border-color: #4fc8ff; background: rgba(60,120,255,0.12); }
+
+.auth-redirect { font-size: 14px; color: rgba(255,255,255,0.55); font-weight: 600; }
+.auth-redirect a { color: #4fc8ff; text-decoration: none; font-weight: 800; margin-left: 5px; }
+.auth-redirect a:hover { text-decoration: underline; }
+
+.error-message { color: var(--error-red); font-size: 12px; font-weight: 700; margin-top: 6px; margin-left: 5px; }
+
+.password-strength { margin-top: 10px; }
+.strength-meter { display: flex; gap: 5px; margin-bottom: 5px; }
+.strength-segment { height: 4px; flex: 1; background: rgba(255,255,255,0.1); border-radius: 2px; transition: background 0.3s ease; }
+.strength-segment.weak { background: var(--error-red); }
+.strength-segment.medium { background: #ffa502; }
+.strength-segment.strong { background: var(--success-green); }
+.strength-text { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600; }
