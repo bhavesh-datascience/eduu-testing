@@ -316,12 +316,21 @@ function syncExamsToBackend(userId, exams) {
     }).catch(error => console.error("Error saving exams:", error));
 }
 
-// Added dynamic label support and layout heights to fix invisible chart bug
 function renderCharts(perfData, attData, attLabels) {
-    // Fallback if labels aren't provided by API
-    if (!attLabels) {
-        attLabels = ['Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue'];
+
+    // --- DYNAMIC WEEK OVERRIDE ---
+    // We dynamically generate the last 7 days (e.g., "Mon", "Tue") based on the current date
+    // and force the chart to use these instead of the months coming from the backend.
+    const dynamicWeekLabels = [];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dynamicWeekLabels.push(d.toLocaleDateString('en-US', { weekday: 'short' }));
     }
+
+    // Override the backend labels with our dynamic week
+    attLabels = dynamicWeekLabels;
+    // -----------------------------
 
     if (typeof Chart !== 'undefined') {
         Chart.defaults.color = '#fff';
@@ -333,7 +342,6 @@ function renderCharts(perfData, attData, attLabels) {
 
     const ctxPEl = document.getElementById('perfChart');
     if (ctxPEl) {
-        // Guarantee visibility: force parent container height
         if (ctxPEl.parentElement) {
             ctxPEl.parentElement.style.position = 'relative';
             ctxPEl.parentElement.style.minHeight = '200px';
@@ -345,7 +353,7 @@ function renderCharts(perfData, attData, attLabels) {
             id: 'centerText', beforeDraw: function (chart) {
                 var width = chart.width, height = chart.height, ctx = chart.ctx;
                 ctx.restore(); ctx.font = "800 24px Nunito"; ctx.fillStyle = "#fff"; ctx.textBaseline = "middle";
-                var text = perfData[0] + "%", textX = Math.round((width - ctx.measureText(text).width) / 2), textY = height / 2;
+                var text = perfData && perfData.length ? perfData[0] + "%" : "0%", textX = Math.round((width - ctx.measureText(text).width) / 2), textY = height / 2;
                 ctx.fillText(text, textX, textY); ctx.save();
             }
         };
@@ -359,7 +367,6 @@ function renderCharts(perfData, attData, attLabels) {
 
     const ctxAEl = document.getElementById('attChart');
     if (ctxAEl) {
-        // Guarantee visibility: force parent container height
         if (ctxAEl.parentElement) {
             ctxAEl.parentElement.style.position = 'relative';
             ctxAEl.parentElement.style.minHeight = '200px';
@@ -373,17 +380,38 @@ function renderCharts(perfData, attData, attLabels) {
         window.attChartInstance = new Chart(ctxA, {
             type: 'line',
             data: {
-                labels: attLabels, // Utilizing dynamic labels
+                labels: attLabels, // Now strictly using dynamic week days
                 datasets: [{
-                    label: 'Activity', data: attData, borderColor: '#ffffff', backgroundColor: gradient,
+                    label: 'Time Spent', data: attData, borderColor: '#ffffff', backgroundColor: gradient,
                     borderWidth: 3, tension: 0.4, fill: true, pointRadius: 4, pointBackgroundColor: '#ffffff',
-                    pointBorderColor: '#ffffff', pointBorderWidth: 1
+                    pointBorderColor: '#ffffff', pointBorderWidth: 1, pointHoverRadius: 6
                 }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                scales: { x: { grid: { display: false }, ticks: { color: 'rgba(255, 255, 255, 0.5)', font: { size: 12 } } }, y: { display: false } },
-                plugins: { legend: { display: false }, tooltip: { enabled: false } }
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: 'rgba(255, 255, 255, 0.5)', font: { size: 12 } } },
+                    y: { display: false }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        displayColors: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 14, weight: 'bold' },
+                        callbacks: {
+                            label: function (context) {
+                                return context.parsed.y + ' hrs';
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                }
             }
         });
     }
@@ -468,16 +496,15 @@ function initDashboardCalendar() {
         });
     }
 }
+
 // ==========================================
 // TASK SCHEDULING LOGIC (DASHBOARD)
 // ==========================================
 
-// Global variables to hold state for our click buttons
 window.dashboardAllSchedules = {};
 window.dashboardUserId = null;
 
 async function loadDashboardSchedule() {
-    // 1. Get the current logged-in user ID
     const userString = localStorage.getItem('user');
     if (!userString) return;
 
@@ -509,10 +536,8 @@ async function loadDashboardSchedule() {
             let todayTasks = [];
             let futureTasks = [];
 
-            // 5. Sort the tasks into Today vs. Future AND track their original index!
             for (const [taskDate, tasksArray] of Object.entries(window.dashboardAllSchedules)) {
                 if (taskDate === todayStr) {
-                    // Map today's tasks so we remember their exact database index and date
                     todayTasks = tasksArray.map((task, idx) => ({
                         ...task,
                         date: taskDate,
@@ -533,9 +558,6 @@ async function loadDashboardSchedule() {
 
             futureTasks.sort((a, b) => a.date.localeCompare(b.date));
 
-            // ==========================================
-            // 7. RENDER TODAY'S TASKS (With Buttons)
-            // ==========================================
             if (todayContainer) {
                 if (todayTasks.length === 0) {
                     todayContainer.innerHTML = '<p style="opacity: 0.6; font-size: 14px; text-align: center; margin: 10px 0;">No tasks scheduled for today. Take a break!</p>';
@@ -562,9 +584,6 @@ async function loadDashboardSchedule() {
                 }
             }
 
-            // ==========================================
-            // 8. RENDER FUTURE TASKS (With Buttons)
-            // ==========================================
             if (futureContainer) {
                 if (futureTasks.length === 0) {
                     futureContainer.innerHTML = '<p style="opacity: 0.6; font-size: 14px; text-align: center; margin: 10px 0;">No upcoming tasks. You are all caught up!</p>';
@@ -608,26 +627,16 @@ async function loadDashboardSchedule() {
     }
 }
 
-// ==========================================
-// ACTIONS: Toggle & Delete directly from Dashboard
-// ==========================================
 window.toggleDashboardTask = function (dateStr, index) {
-    // We are now telling the "Done" button to simply delete the task entirely!
     window.deleteDashboardTask(dateStr, index);
 };
 
 window.deleteDashboardTask = function (dateStr, index) {
     if (!window.dashboardAllSchedules[dateStr]) return;
-
-    // Remove the task from the array
     window.dashboardAllSchedules[dateStr].splice(index, 1);
-
-    // If the array is empty, remove the date key entirely
     if (window.dashboardAllSchedules[dateStr].length === 0) {
         delete window.dashboardAllSchedules[dateStr];
     }
-
-    // Save to DB and re-render
     syncDashboardSchedule(window.dashboardUserId, window.dashboardAllSchedules);
     loadDashboardSchedule();
 };
@@ -642,8 +651,8 @@ function syncDashboardSchedule(userId, scheduleData) {
         .catch(error => console.error("Error saving dashboard schedule to db:", error));
 }
 
-// Execute the function immediately when the script runs
 loadDashboardSchedule();
+
 // ==========================================
 // SMART RECOMMENDATIONS LOGIC
 // ==========================================
@@ -651,33 +660,30 @@ function loadSmartRecommendations() {
     const recContainer = document.getElementById('smart-recommendations-list');
     if (!recContainer) return;
 
-    // Here we generate smart, actionable suggestions.
-    // In a future update, you can tie this directly to the user's weak subjects!
     const recommendations = [
         {
             title: "Start a Focus Session",
             desc: "You have pending tasks. Start a 25-minute Pomodoro timer to knock them out.",
             icon: "fa-stopwatch",
-            color: "#ff4757", // Red
+            color: "#ff4757",
             link: "focus.html"
         },
         {
             title: "Take a Practice Quiz",
             desc: "Boost your retention by taking a quick quiz on your recent subjects.",
             icon: "fa-clipboard-question",
-            color: "#6366f1", // Indigo
+            color: "#6366f1",
             link: "quiz-dashboard.html"
         },
         {
             title: "Join Group Study",
             desc: "Collaborate and discuss complex topics with your peers in a study room.",
             icon: "fa-users",
-            color: "#2ed573", // Green
+            color: "#2ed573",
             link: "group-study.html"
         }
     ];
 
-    // Map the array into beautiful HTML elements
     recContainer.innerHTML = recommendations.map(rec => `
         <div style="display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; transition: 0.3s; cursor: pointer;" 
              onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)';" 
@@ -698,8 +704,8 @@ function loadSmartRecommendations() {
     `).join('');
 }
 
-// Execute the function
 loadSmartRecommendations();
+
 function logout() {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
