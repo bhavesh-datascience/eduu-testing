@@ -644,9 +644,9 @@ def get_gamification_data(user_id: int, subject: str, type: str,
     file_to_open = "quiz_data.json" if type == "quiz" else "flashcard_data.json"
 
     if not os.path.exists(file_to_open):
-        raise HTTPException(status_code=500, detail=f"{file_to_open} missing on server")
+        raise HTTPException(status_code=500, detail=f"{file_to_open} missing on production server")
 
-    # FIX: Explicitly open files with utf-8 encoding to prevent Unicode errors
+    # THE FIX: Explicitly open with utf-8 so Hindi and Math symbols don't crash the server
     with open(file_to_open, "r", encoding="utf-8") as f:
         full_data = json.load(f)
     
