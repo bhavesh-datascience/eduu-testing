@@ -218,7 +218,7 @@ function fetchDashboardData(userId) {
 
             currentExams = data.upcoming_exams || [];
             renderExams(currentExams);
-            
+
             // Pass the dynamic attendance labels returning from the backend
             renderCharts(data.charts.performance, data.charts.attendance, data.charts.attendance_labels);
         })
@@ -334,9 +334,9 @@ function renderCharts(perfData, attData, attLabels) {
     const ctxPEl = document.getElementById('perfChart');
     if (ctxPEl) {
         // Guarantee visibility: force parent container height
-        if(ctxPEl.parentElement) {
+        if (ctxPEl.parentElement) {
             ctxPEl.parentElement.style.position = 'relative';
-            ctxPEl.parentElement.style.minHeight = '200px'; 
+            ctxPEl.parentElement.style.minHeight = '200px';
         }
 
         const ctxP = ctxPEl.getContext('2d');
@@ -360,9 +360,9 @@ function renderCharts(perfData, attData, attLabels) {
     const ctxAEl = document.getElementById('attChart');
     if (ctxAEl) {
         // Guarantee visibility: force parent container height
-        if(ctxAEl.parentElement) {
+        if (ctxAEl.parentElement) {
             ctxAEl.parentElement.style.position = 'relative';
-            ctxAEl.parentElement.style.minHeight = '200px'; 
+            ctxAEl.parentElement.style.minHeight = '200px';
         }
 
         const ctxA = ctxAEl.getContext('2d');
@@ -468,7 +468,238 @@ function initDashboardCalendar() {
         });
     }
 }
+// ==========================================
+// TASK SCHEDULING LOGIC (DASHBOARD)
+// ==========================================
 
+// Global variables to hold state for our click buttons
+window.dashboardAllSchedules = {};
+window.dashboardUserId = null;
+
+async function loadDashboardSchedule() {
+    // 1. Get the current logged-in user ID
+    const userString = localStorage.getItem('user');
+    if (!userString) return;
+
+    const user = JSON.parse(userString);
+    window.dashboardUserId = user.id || user.user_id;
+
+    if (!window.dashboardUserId) {
+        console.error("No user ID found for dashboard schedule.");
+        return;
+    }
+
+    const todayContainer = document.getElementById('dashboard-today-list');
+    const futureContainer = document.getElementById('dashboard-future-list');
+
+    const today = new Date();
+    const todayStr = [
+        today.getFullYear(),
+        (today.getMonth() + 1).toString().padStart(2, '0'),
+        today.getDate().toString().padStart(2, '0')
+    ].join('-');
+
+    try {
+        const response = await fetch(`/api/get-schedule/${window.dashboardUserId}`);
+        const data = await response.json();
+
+        if (data.status === "success" && data.schedule) {
+            window.dashboardAllSchedules = data.schedule;
+
+            let todayTasks = [];
+            let futureTasks = [];
+
+            // 5. Sort the tasks into Today vs. Future AND track their original index!
+            for (const [taskDate, tasksArray] of Object.entries(window.dashboardAllSchedules)) {
+                if (taskDate === todayStr) {
+                    // Map today's tasks so we remember their exact database index and date
+                    todayTasks = tasksArray.map((task, idx) => ({
+                        ...task,
+                        date: taskDate,
+                        originalIndex: idx
+                    }));
+                } else if (taskDate > todayStr) {
+                    tasksArray.forEach((task, idx) => {
+                        futureTasks.push({
+                            date: taskDate,
+                            originalIndex: idx,
+                            name: task.name,
+                            timeString: task.timeString,
+                            isDone: task.isDone
+                        });
+                    });
+                }
+            }
+
+            futureTasks.sort((a, b) => a.date.localeCompare(b.date));
+
+            // ==========================================
+            // 7. RENDER TODAY'S TASKS (With Buttons)
+            // ==========================================
+            if (todayContainer) {
+                if (todayTasks.length === 0) {
+                    todayContainer.innerHTML = '<p style="opacity: 0.6; font-size: 14px; text-align: center; margin: 10px 0;">No tasks scheduled for today. Take a break!</p>';
+                } else {
+                    todayContainer.innerHTML = todayTasks.map(t => {
+                        const checkColor = t.isDone ? '#2ed573' : 'rgba(255,255,255,0.4)';
+                        return `
+                        <div class="timeline-item" style="${t.isDone ? 'opacity: 0.4; text-decoration: line-through;' : ''}">
+                            <div class="time-dot" style="background: ${t.isDone ? '#2ed573' : 'var(--text-white)'};"></div>
+                            <div style="flex-grow: 1;">
+                                <h4 style="font-size:15px; margin-bottom:2px;">${t.name}</h4>
+                                <span style="font-size:12px; opacity:0.7;">${t.timeString}</span>
+                            </div>
+                            <div style="display: flex; gap: 15px; align-items: center; margin-left: 10px;">
+                                <button onclick="toggleDashboardTask('${t.date}', ${t.originalIndex})" title="Mark as Done" style="background:none; border:none; color:${checkColor}; cursor:pointer; font-size: 18px; transition: 0.3s;">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </button>
+                                <button onclick="deleteDashboardTask('${t.date}', ${t.originalIndex})" title="Remove Task" style="background:none; border:none; color:#ff4757; cursor:pointer; font-size: 16px; transition: 0.3s;">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `}).join('');
+                }
+            }
+
+            // ==========================================
+            // 8. RENDER FUTURE TASKS (With Buttons)
+            // ==========================================
+            if (futureContainer) {
+                if (futureTasks.length === 0) {
+                    futureContainer.innerHTML = '<p style="opacity: 0.6; font-size: 14px; text-align: center; margin: 10px 0;">No upcoming tasks. You are all caught up!</p>';
+                } else {
+                    futureContainer.innerHTML = futureTasks.map(t => {
+                        const dateObj = new Date(t.date);
+                        const prettyDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        const checkColor = t.isDone ? '#2ed573' : 'rgba(255,255,255,0.4)';
+
+                        return `
+                        <div class="timeline-item" style="opacity: 0.9; ${t.isDone ? 'text-decoration: line-through; opacity: 0.4;' : ''}">
+                            <div class="time-dot" style="background: transparent; border: 2px solid #c5a668;"></div>
+                            
+                            <div style="flex-grow: 1;">
+                                <h4 style="font-size:15px; margin-bottom:2px; color: #e2e8f0;">${t.name}</h4>
+                                <span style="font-size:12px; opacity:0.7;">${t.timeString}</span>
+                            </div>
+                            
+                            <div style="font-size: 12px; font-weight: bold; background: rgba(197, 166, 104, 0.2); color: #f1c40f; padding: 5px 10px; border-radius: 6px; white-space: nowrap;">
+                                ${prettyDate}
+                            </div>
+
+                            <div style="display: flex; gap: 15px; align-items: center; margin-left: 15px;">
+                                <button onclick="toggleDashboardTask('${t.date}', ${t.originalIndex})" title="Mark as Done" style="background:none; border:none; color:${checkColor}; cursor:pointer; font-size: 18px; transition: 0.3s;">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </button>
+                                <button onclick="deleteDashboardTask('${t.date}', ${t.originalIndex})" title="Remove Task" style="background:none; border:none; color:#ff4757; cursor:pointer; font-size: 16px; transition: 0.3s;">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+                }
+            }
+
+        }
+    } catch (error) {
+        console.error("Error fetching dashboard schedule:", error);
+        if (todayContainer) todayContainer.innerHTML = '<p style="color:#ff4757; text-align:center;">Failed to load schedule.</p>';
+    }
+}
+
+// ==========================================
+// ACTIONS: Toggle & Delete directly from Dashboard
+// ==========================================
+window.toggleDashboardTask = function (dateStr, index) {
+    // We are now telling the "Done" button to simply delete the task entirely!
+    window.deleteDashboardTask(dateStr, index);
+};
+
+window.deleteDashboardTask = function (dateStr, index) {
+    if (!window.dashboardAllSchedules[dateStr]) return;
+
+    // Remove the task from the array
+    window.dashboardAllSchedules[dateStr].splice(index, 1);
+
+    // If the array is empty, remove the date key entirely
+    if (window.dashboardAllSchedules[dateStr].length === 0) {
+        delete window.dashboardAllSchedules[dateStr];
+    }
+
+    // Save to DB and re-render
+    syncDashboardSchedule(window.dashboardUserId, window.dashboardAllSchedules);
+    loadDashboardSchedule();
+};
+
+function syncDashboardSchedule(userId, scheduleData) {
+    fetch('/api/update-schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, schedule: scheduleData })
+    })
+        .then(response => response.json())
+        .catch(error => console.error("Error saving dashboard schedule to db:", error));
+}
+
+// Execute the function immediately when the script runs
+loadDashboardSchedule();
+// ==========================================
+// SMART RECOMMENDATIONS LOGIC
+// ==========================================
+function loadSmartRecommendations() {
+    const recContainer = document.getElementById('smart-recommendations-list');
+    if (!recContainer) return;
+
+    // Here we generate smart, actionable suggestions.
+    // In a future update, you can tie this directly to the user's weak subjects!
+    const recommendations = [
+        {
+            title: "Start a Focus Session",
+            desc: "You have pending tasks. Start a 25-minute Pomodoro timer to knock them out.",
+            icon: "fa-stopwatch",
+            color: "#ff4757", // Red
+            link: "focus.html"
+        },
+        {
+            title: "Take a Practice Quiz",
+            desc: "Boost your retention by taking a quick quiz on your recent subjects.",
+            icon: "fa-clipboard-question",
+            color: "#6366f1", // Indigo
+            link: "quiz-dashboard.html"
+        },
+        {
+            title: "Join Group Study",
+            desc: "Collaborate and discuss complex topics with your peers in a study room.",
+            icon: "fa-users",
+            color: "#2ed573", // Green
+            link: "group-study.html"
+        }
+    ];
+
+    // Map the array into beautiful HTML elements
+    recContainer.innerHTML = recommendations.map(rec => `
+        <div style="display: flex; align-items: center; padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; transition: 0.3s; cursor: pointer;" 
+             onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)';" 
+             onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)';" 
+             onclick="window.location.href='${rec.link}'">
+             
+            <div style="width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: ${rec.color}; margin-right: 15px; flex-shrink: 0;">
+                <i class="fa-solid ${rec.icon}"></i>
+            </div>
+            
+            <div style="flex-grow: 1;">
+                <h4 style="margin: 0 0 5px 0; font-size: 15px; color: #e2e8f0;">${rec.title}</h4>
+                <p style="margin: 0; font-size: 12px; color: #cbd5e1; opacity: 0.8; line-height: 1.4;">${rec.desc}</p>
+            </div>
+            
+            <i class="fa-solid fa-chevron-right" style="color: rgba(255,255,255,0.3); font-size: 14px; margin-left: 10px;"></i>
+        </div>
+    `).join('');
+}
+
+// Execute the function
+loadSmartRecommendations();
 function logout() {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
